@@ -1,1 +1,1 @@
-# studymama-web
+# studymama-ui
