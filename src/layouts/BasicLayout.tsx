@@ -54,14 +54,14 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
     return Authorized.check(item.authority, localItem, null) as MenuDataItem;
   });
 
-const defaultFooterDom = (
+export const defaultFooterDom = (
   <DefaultFooter
-    copyright={`${new Date().getFullYear()} 蚂蚁集团体验技术部出品`}
+    copyright={`${new Date().getFullYear()} Produced by "Team 7 ( Dan, Prakash, Liye, Xinyi, Aung)"`}
     links={[
       {
         key: 'License',
         title: 'MIT License',
-        href: 'https://github.com/prakashkaul/studymama-ui.git/LICENCE',
+        href: 'https://raw.githubusercontent.com/prakashkaul/studymama-ui/main/LICENSE?token=AGURPTPM5JIOICFUVODR6BTAQLB3M',
         blankTarget: true,
       },
       {
@@ -73,7 +73,7 @@ const defaultFooterDom = (
       {
         key: 'Team',
         title: 'Team 7',
-        href: 'https://ant.design',
+        href: '#',
         blankTarget: true,
       },
     ]}
@@ -166,7 +166,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
         return menuData || [];
       }}
       waterMarkProps={{
-        content: 'Ant Design Pro',
+        content: 'Studymama',
         fontColor: 'rgba(24,144,255,0.15)',
       }}
     >

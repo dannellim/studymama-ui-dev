@@ -39,11 +39,12 @@ const Model: LoginModelType = {
         type: 'changeLoginStatus',
         payload: response,
       });
+
       // Login successfully
-      if (response.status === 'ok') {
+      if (response.status === 'ok'|| response.token) {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
-        message.success('🎉 🎉 🎉  登录成功！');
+        message.success('🎉 🎉 🎉  Login successful!');
         let { redirect } = params as { redirect: string };
         if (redirect) {
           const redirectUrlParams = new URL(redirect);
@@ -80,11 +81,12 @@ const Model: LoginModelType = {
 
   reducers: {
     changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
+      setAuthority(payload.token);
       return {
         ...state,
-        status: payload.status,
-        type: payload.type,
+        status: ( payload.token )?"ok":"500",
+        type: payload.token,
+        token: payload.token,
       };
     },
   },

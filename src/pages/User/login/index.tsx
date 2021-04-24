@@ -1,13 +1,12 @@
 import {
-  AlipayCircleOutlined,
+  AppleFilled, GoogleCircleFilled,
   LockOutlined,
   MailOutlined,
   MobileOutlined,
-  TaobaoCircleOutlined,
+  FacebookFilled,
   UserOutlined,
-  WeiboCircleOutlined,
 } from '@ant-design/icons';
-import { Alert, Space, message, Tabs } from 'antd';
+import { Alert, Space, message, Tabs, Row, Col } from 'antd';
 import React, { useState } from 'react';
 import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, connect, FormattedMessage } from 'umi';
@@ -77,14 +76,14 @@ const Login: React.FC<LoginProps> = (props) => {
             key="account"
             tab={intl.formatMessage({
               id: 'pages.login.accountLogin.tab',
-              defaultMessage: '账户密码登录',
+              defaultMessage: 'Account Login',
             })}
           />
           <Tabs.TabPane
             key="mobile"
             tab={intl.formatMessage({
               id: 'pages.login.phoneLogin.tab',
-              defaultMessage: '手机号登录',
+              defaultMessage: 'Phone Login',
             })}
           />
         </Tabs>
@@ -93,21 +92,21 @@ const Login: React.FC<LoginProps> = (props) => {
           <LoginMessage
             content={intl.formatMessage({
               id: 'pages.login.accountLogin.errorMessage',
-              defaultMessage: '账户或密码错误（admin/ant.design)',
+              defaultMessage: 'Incorrect username/password',
             })}
           />
         )}
         {type === 'account' && (
           <>
             <ProFormText
-              name="userName"
+              name="username"
               fieldProps={{
                 size: 'large',
-                prefix: <UserOutlined className={styles.prefixIcon} />,
+                prefix: <UserOutlined className={styles.prefixIcon}/>,
               }}
               placeholder={intl.formatMessage({
                 id: 'pages.login.username.placeholder',
-                defaultMessage: '用户名: admin or user',
+                defaultMessage: 'Username: admin or user',
               })}
               rules={[
                 {
@@ -115,7 +114,7 @@ const Login: React.FC<LoginProps> = (props) => {
                   message: (
                     <FormattedMessage
                       id="pages.login.username.required"
-                      defaultMessage="请输入用户名!"
+                      defaultMessage="Please input your username!"
                     />
                   ),
                 },
@@ -125,11 +124,11 @@ const Login: React.FC<LoginProps> = (props) => {
               name="password"
               fieldProps={{
                 size: 'large',
-                prefix: <LockOutlined className={styles.prefixIcon} />,
+                prefix: <LockOutlined className={styles.prefixIcon}/>,
               }}
               placeholder={intl.formatMessage({
                 id: 'pages.login.password.placeholder',
-                defaultMessage: '密码: ant.design',
+                defaultMessage: 'Password: ant.design',
               })}
               rules={[
                 {
@@ -137,7 +136,7 @@ const Login: React.FC<LoginProps> = (props) => {
                   message: (
                     <FormattedMessage
                       id="pages.login.password.required"
-                      defaultMessage="请输入密码！"
+                      defaultMessage="Please input your password!"
                     />
                   ),
                 },
@@ -147,19 +146,19 @@ const Login: React.FC<LoginProps> = (props) => {
         )}
 
         {status === 'error' && loginType === 'mobile' && !submitting && (
-          <LoginMessage content="验证码错误" />
+          <LoginMessage content="Verification code error"/>
         )}
         {type === 'mobile' && (
           <>
             <ProFormText
               fieldProps={{
                 size: 'large',
-                prefix: <MobileOutlined className={styles.prefixIcon} />,
+                prefix: <MobileOutlined className={styles.prefixIcon}/>,
               }}
               name="mobile"
               placeholder={intl.formatMessage({
                 id: 'pages.login.phoneNumber.placeholder',
-                defaultMessage: '手机号',
+                defaultMessage: 'Phone Number',
               })}
               rules={[
                 {
@@ -167,7 +166,7 @@ const Login: React.FC<LoginProps> = (props) => {
                   message: (
                     <FormattedMessage
                       id="pages.login.phoneNumber.required"
-                      defaultMessage="请输入手机号！"
+                      defaultMessage="Please input your phone number!"
                     />
                   ),
                 },
@@ -176,7 +175,7 @@ const Login: React.FC<LoginProps> = (props) => {
                   message: (
                     <FormattedMessage
                       id="pages.login.phoneNumber.invalid"
-                      defaultMessage="手机号格式错误！"
+                      defaultMessage="Phone number is invalid!"
                     />
                   ),
                 },
@@ -185,25 +184,25 @@ const Login: React.FC<LoginProps> = (props) => {
             <ProFormCaptcha
               fieldProps={{
                 size: 'large',
-                prefix: <MailOutlined className={styles.prefixIcon} />,
+                prefix: <MailOutlined className={styles.prefixIcon}/>,
               }}
               captchaProps={{
                 size: 'large',
               }}
               placeholder={intl.formatMessage({
                 id: 'pages.login.captcha.placeholder',
-                defaultMessage: '请输入验证码',
+                defaultMessage: 'Verification Code',
               })}
               captchaTextRender={(timing, count) => {
                 if (timing) {
                   return `${count} ${intl.formatMessage({
                     id: 'pages.getCaptchaSecondText',
-                    defaultMessage: '获取验证码',
+                    defaultMessage: 'sec(s)',
                   })}`;
                 }
                 return intl.formatMessage({
                   id: 'pages.login.phoneLogin.getVerificationCode',
-                  defaultMessage: '获取验证码',
+                  defaultMessage: 'Get Code',
                 });
               }}
               name="captcha"
@@ -213,7 +212,7 @@ const Login: React.FC<LoginProps> = (props) => {
                   message: (
                     <FormattedMessage
                       id="pages.login.captcha.required"
-                      defaultMessage="请输入验证码！"
+                      defaultMessage="Please input verification code!"
                     />
                   ),
                 },
@@ -223,7 +222,7 @@ const Login: React.FC<LoginProps> = (props) => {
                 if (result === false) {
                   return;
                 }
-                message.success('获取验证码成功！验证码为：1234');
+                message.success('Get the verification code successfully! The verification code is：1234');
               }}
             />
           </>
@@ -234,23 +233,35 @@ const Login: React.FC<LoginProps> = (props) => {
           }}
         >
           <ProFormCheckbox noStyle name="autoLogin">
-            <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
+            <FormattedMessage id="pages.login.rememberMe" defaultMessage="Remember me"/>
           </ProFormCheckbox>
           <a
             style={{
               float: 'right',
             }}
           >
-            <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />
+            <FormattedMessage id="pages.login.forgotPassword" defaultMessage="Forgot Password ?"/>
           </a>
         </div>
       </ProForm>
-      <Space className={styles.other}>
-        <FormattedMessage id="pages.login.loginWith" defaultMessage="其他登录方式" />
-        <AlipayCircleOutlined className={styles.icon} />
-        <TaobaoCircleOutlined className={styles.icon} />
-        <WeiboCircleOutlined className={styles.icon} />
-      </Space>
+      <Row justify="center"><Col span={8}>&nbsp;
+      </Col><Col span={8}>&nbsp;
+      </Col>
+        <Col span={8}>&nbsp;
+        </Col>
+      </Row>
+        <Row justify="center">
+          <Col span={8}>&nbsp;</Col>
+          <Col span={8}>
+            <Space>
+              <GoogleCircleFilled className={styles.icon}/>
+              <FacebookFilled className={styles.icon}/>
+              <AppleFilled className={styles.icon}/>
+            </Space>
+          </Col>
+          <Col span={8}>&nbsp;
+          </Col>
+        </Row>
     </div>
   );
 };

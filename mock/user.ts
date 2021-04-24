@@ -17,53 +17,53 @@ async function getFakeCaptcha(req: Request, res: Response) {
 export default {
   // 支持值为 Object 和 Array
   'GET /api/currentUser': {
-    name: 'Serati Ma',
-    avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
+    name: 'Prakash Kaul',
+    avatar: 'https://avatars.githubusercontent.com/u/27858893?v=4',
     userid: '00000001',
-    email: 'antdesign@alipay.com',
-    signature: '海纳百川，有容乃大',
-    title: '交互专家',
-    group: '蚂蚁集团－某某某事业群－某某平台部－某某技术部－UED',
+    email: 'prakash.kaul.16@gmail.com',
+    signature: 'PSK',
+    title: 'Full Stack Developer',
+    group: 'NUS - Graduate Student',
     tags: [
       {
         key: '0',
-        label: '很有想法的',
+        label: 'Very thoughtful',
       },
       {
         key: '1',
-        label: '专注设计',
+        label: 'Focus on design',
       },
       {
         key: '2',
-        label: '辣~',
+        label: 'Spicy',
       },
       {
         key: '3',
-        label: '大长腿',
+        label: 'Long legs',
       },
       {
         key: '4',
-        label: '川妹子',
+        label: 'Chuan Meizi',
       },
       {
         key: '5',
-        label: '海纳百川',
+        label: 'Inclusive of all rivers',
       },
     ],
     notifyCount: 12,
     unreadCount: 11,
-    country: 'China',
+    country: 'Singapore',
     geographic: {
       province: {
-        label: '浙江省',
+        label: 'Singapore',
         key: '330000',
       },
       city: {
-        label: '杭州市',
+        label: 'Singapore',
         key: '330100',
       },
     },
-    address: '西湖区工专路 77 号',
+    address: '1, UTown, NUS',
     phone: '0752-268888888',
   },
   // GET POST 可省略
@@ -88,9 +88,9 @@ export default {
     },
   ],
   'POST /api/login/account': async (req: Request, res: Response) => {
-    const { password, userName, type } = req.body;
+    const { password, username, type } = req.body;
     await waitTime(2000);
-    if (password === 'ant.design' && userName === 'admin') {
+    if (password === 'ant.design' && username === 'admin') {
       res.send({
         status: 'ok',
         type,
@@ -98,7 +98,7 @@ export default {
       });
       return;
     }
-    if (password === 'ant.design' && userName === 'user') {
+    if (password === 'ant.design' && username === 'user') {
       res.send({
         status: 'ok',
         type,

@@ -7,6 +7,7 @@ import React from 'react';
 import type { ConnectState } from '@/models/connect';
 import logo from '../assets/logo.jpg';
 import styles from './UserLayout.less';
+import {GithubOutlined} from "@ant-design/icons";
 
 export type UserLayoutProps = {
   breadcrumbNameMap: Record<string, MenuDataItem>;
@@ -55,13 +56,35 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
             <div className={styles.desc}>
               <FormattedMessage
                 id="pages.layouts.userLayout.title"
-                defaultMessage="StudyMama Web"
+                defaultMessage="StudyMama UI"
               />
             </div>
           </div>
           {children}
         </div>
-        <DefaultFooter />
+        <DefaultFooter
+          copyright={`${new Date().getFullYear()} Produced by "Team 7 ( Dan, Prakash, Liye, Xinyi, Aung)"`}
+          links={[
+            {
+              key: 'License',
+              title: 'MIT License',
+              href: 'https://raw.githubusercontent.com/prakashkaul/studymama-ui/main/LICENSE?token=AGURPTPM5JIOICFUVODR6BTAQLB3M',
+              blankTarget: true,
+            },
+            {
+              key: 'github',
+              title: <GithubOutlined />,
+              href: 'https://github.com/prakashkaul/studymama-ui.git',
+              blankTarget: true,
+            },
+            {
+              key: 'Team',
+              title: 'Team 7',
+              href: '#',
+              blankTarget: true,
+            },
+          ]}
+        />
       </div>
     </HelmetProvider>
   );
