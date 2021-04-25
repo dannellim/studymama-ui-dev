@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  studymama-ui:
+    image: studymama-ui:latest
+    hostname: studymama-ui
+    container_name: studymama-ui
+    networks:
+      - logmonnet
+    ports:
+      - "3000:3000"
+
+networks:
+  logmonnet:
+    driver: "bridge"
