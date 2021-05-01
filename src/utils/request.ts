@@ -1,6 +1,6 @@
-/** Request 网络请求工具 更详细的 api 文档: https://github.com/umijs/umi-request */
-import { extend } from 'umi-request';
+import {extend} from 'umi-request';
 import { notification } from 'antd';
+import {getAuthority} from "@/utils/authority";
 
 const codeMessage: { [status: number]: string } = {
   200: 'The server successfully returned the requested data.',
@@ -28,21 +28,30 @@ const errorHandler = (error: { response: Response }): Response => {
     const { status, url } = response;
 
     notification.error({
-      message: `Request Error ${status}: ${url}`,
+      message: `Request error ${status}: ${url}`,
       description: errorText,
     });
   } else if (!response) {
     notification.error({
-      description: 'Network unreachable and cannot connect to the server',
-      message: 'Network Error',
+      description: 'Your network is abnormal and cannot connect to the server',
+      message: 'Network anomaly',
     });
   }
   return response;
 };
 
-const request = extend({
-  errorHandler,
-  credentials: 'include',
-});
+function createRequest() {
+  const myRequest = extend({
+    errorHandler, // default error handling
+    getResponse: true,
+    headers: // Does the default request bring cookie
+      {
+        'Access-Control-Allow-Origin': 'http://localhost:8080',
+        Authorization: JSON.stringify(getAuthority("token")),
+      }
+  });
+  return myRequest;
+}
+const request =  createRequest();
 
 export default request;

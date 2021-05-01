@@ -1,42 +1,38 @@
 import request from '@/utils/request';
-import extend from 'umi-request';
+import {AUTHENTICATE, REFRESH_TOKEN} from "@/services/resourceUrl";
 
 export type LoginParamsType = {
-  userName: string;
+  username: string;
   password: string;
-  mobile: string;
-  captcha: string;
 };
 
-export async function fakeAccountLogin(params: LoginParamsType) {
-  // return request('/api/login/account', {
-  //   method: 'POST',
-  //   data: params,
-  // });
-  return accountLogin(params)
-}
-
-
 export async function accountLogin(params: LoginParamsType) {
-  return extend('http://localhost:8080/authenticate', {
-    method: "POST",
-    data: params,
-    headers: {
-          "Content-Type": "application/json",
-    },
+  return request(AUTHENTICATE,
+    {
+      method: 'POST',
+      data: JSON.stringify(params),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    }).then((response) => {
+    return response;
+  }).catch((error) => {
+    return error;
   });
-
-  // return request('http://localhost:8080/authenticate', {
-  //   method: "POST",
-  //   requestType: "json",
-  //   data: params,
-  //   mode: "no-cors",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  // });
 }
 
-export async function getFakeCaptcha(mobile: string) {
-  return request(`/api/login/captcha?mobile=${mobile}`);
+export async function refreshLogin(params: LoginParamsType) {
+  return request(REFRESH_TOKEN,
+    {
+      method: 'POST',
+      data: JSON.stringify(params),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    }).then((response) => {
+    return response;
+  }).catch((error) => {
+    return error;
+  });
 }
+

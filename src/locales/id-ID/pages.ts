@@ -21,11 +21,15 @@ export default {
   'pages.login.submit': 'Masuk',
   'pages.login.loginWith': 'Masuk dengan :',
   'pages.login.registerAccount': 'Daftar Akun',
+  'pages.welcome.search.school': 'Sekolah & Pusat Pendidikan',
+  'pages.welcome.search.transport': 'Bus & Kereta',
+  'pages.welcome.search.food': 'Pujasera & Restoran Pangan',
+  'pages.welcome.search.keywords': 'Kategori Pencarian Populer',
+  'pages.welcome.alertMessage': 'Selamat datang di StudyMama! Toko serba ada Anda untuk hasil pencarian yang lebih cepat dan lebih relevan untuk kebutuhan belajar Anda.',
+  'pages.welcome.search.category': 'Masukkan Kategori Pencarian',
   'pages.welcome.advancedComponent': 'Formulir Lanjutan',
   'pages.welcome.link': 'Selamat datang',
   'pages.welcome.advancedLayout': 'Tata letak Lanjutan',
-  'pages.welcome.alertMessage':
-    'Komponen heavy-duty yang lebih cepat dan lebih kuat telah dirilis.',
   'pages.admin.subPage.title': 'Halaman ini hanya dapat dilihat oleh admin',
   'pages.admin.subPage.alertMessage':
     'umi ui telah dirilis, silahkan gunakan npm run ui untuk memulai pengalaman.',

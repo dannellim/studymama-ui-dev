@@ -11,12 +11,7 @@ export type TableListItem = {
   updatedAt: Date;
   createdAt: Date;
   progress: number;
-};
-
-export type TableListPagination = {
-  total: number;
-  pageSize: number;
-  current: number;
+  rating: number;
 };
 
 export type TableListData = {
@@ -25,6 +20,8 @@ export type TableListData = {
 };
 
 export type TableListParams = {
+  keyword?: string;
+  category?: string;
   status?: string;
   name?: string;
   desc?: string;
@@ -33,4 +30,51 @@ export type TableListParams = {
   currentPage?: number;
   filter?: Record<string, any[]>;
   sorter?: Record<string, any>;
+};
+
+export type PostList = {
+  list: Post[];
+  pagination: Partial<TableListPagination>;
+};
+
+
+export type PostListParams = {
+  keyword?: string;
+  category?: string;
+  pageSize?: number;
+  current?: number;
+  filter?: Record<string, any[]>;
+  sorter?: Record<string, any>;
+};
+
+export type GeoPoint = {
+  lat: number;
+  lon: number;
+}
+
+export type Picture = {
+  link1: string;
+  link2: string;
+}
+
+export type Post = {
+  id?: number;
+  title?: string;
+  description?: string;
+  website?: string;
+  location?: GeoPoint;
+  status?: string;
+  post_dt?: string;
+  edited_dt?: string;
+  price?: string;
+  category?: string;
+  picture?: Picture;
+  accountId?: string;
+  rating?: number;
+}
+
+export type PostListPagination = {
+  total: number;
+  pageSize: number;
+  current: number;
 };

@@ -2,18 +2,17 @@ import {
   AppleFilled, GoogleCircleFilled,
   LockOutlined,
   MailOutlined,
-  MobileOutlined,
   FacebookFilled,
   UserOutlined,
 } from '@ant-design/icons';
-import { Alert, Space, message, Tabs, Row, Col } from 'antd';
+import {Alert, Space, Tabs, Row, Col} from 'antd';
 import React, { useState } from 'react';
-import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
+import ProForm, { ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, connect, FormattedMessage } from 'umi';
-import { getFakeCaptcha } from '@/services/login';
 import type { Dispatch } from 'umi';
 import type { StateType } from '@/models/login';
 import type { LoginParamsType } from '@/services/login';
+import type { RegisterParamsType } from '@/services/register';
 import type { ConnectState } from '@/models/connect';
 
 import styles from './index.less';
@@ -40,14 +39,22 @@ const LoginMessage: React.FC<{
 const Login: React.FC<LoginProps> = (props) => {
   const { userLogin = {}, submitting } = props;
   const { status, type: loginType } = userLogin;
-  const [type, setType] = useState<string>('account');
+  const [ actionTab, setActionTab ] = useState<string>('login');
   const intl = useIntl();
 
   const handleSubmit = (values: LoginParamsType) => {
     const { dispatch } = props;
     dispatch({
       type: 'login/login',
-      payload: { ...values, type },
+      payload: { ...values, actionTab },
+    });
+  };
+  const handleRegister = (values: RegisterParamsType) => {
+    const { dispatch } = props;
+    const role = "ROLE_USER";
+    dispatch({
+      type: 'register/register',
+      payload: { ...values, role },
     });
   };
   return (
@@ -67,36 +74,40 @@ const Login: React.FC<LoginProps> = (props) => {
           },
         }}
         onFinish={(values) => {
-          handleSubmit(values as LoginParamsType);
+          if (actionTab === 'register') {
+            handleRegister(values as RegisterParamsType);
+          } else {
+            handleSubmit(values as LoginParamsType);
+          }
           return Promise.resolve();
         }}
       >
-        <Tabs activeKey={type} onChange={setType}>
+        <Tabs activeKey={actionTab} onChange={setActionTab}>
           <Tabs.TabPane
-            key="account"
+            key="login"
             tab={intl.formatMessage({
-              id: 'pages.login.accountLogin.tab',
-              defaultMessage: 'Account Login',
+              id: 'pages.login.login.tab',
+              defaultMessage: 'Login',
             })}
           />
           <Tabs.TabPane
-            key="mobile"
+            key="register"
             tab={intl.formatMessage({
-              id: 'pages.login.phoneLogin.tab',
-              defaultMessage: 'Phone Login',
+              id: 'pages.login.register.tab',
+              defaultMessage: 'Register',
             })}
           />
         </Tabs>
 
-        {status === 'error' && loginType === 'account' && !submitting && (
+        {status === 'error' && loginType === 'login' && !submitting && (
           <LoginMessage
             content={intl.formatMessage({
-              id: 'pages.login.accountLogin.errorMessage',
+              id: 'pages.login.login.errorMessage',
               defaultMessage: 'Incorrect username/password',
             })}
           />
         )}
-        {type === 'account' && (
+        {actionTab === 'login' && (
           <>
             <ProFormText
               name="username"
@@ -106,7 +117,7 @@ const Login: React.FC<LoginProps> = (props) => {
               }}
               placeholder={intl.formatMessage({
                 id: 'pages.login.username.placeholder',
-                defaultMessage: 'Username: admin or user',
+                defaultMessage: 'User Name',
               })}
               rules={[
                 {
@@ -128,7 +139,7 @@ const Login: React.FC<LoginProps> = (props) => {
               }}
               placeholder={intl.formatMessage({
                 id: 'pages.login.password.placeholder',
-                defaultMessage: 'Password: ant.design',
+                defaultMessage: 'Password',
               })}
               rules={[
                 {
@@ -145,88 +156,77 @@ const Login: React.FC<LoginProps> = (props) => {
           </>
         )}
 
-        {status === 'error' && loginType === 'mobile' && !submitting && (
+        {status === 'error' && loginType === 'register' && !submitting && (
           <LoginMessage content="Verification code error"/>
         )}
-        {type === 'mobile' && (
+        {actionTab === 'register' && (
           <>
             <ProFormText
               fieldProps={{
                 size: 'large',
-                prefix: <MobileOutlined className={styles.prefixIcon}/>,
+                prefix: <MailOutlined className={styles.prefixIcon}/>,
               }}
-              name="mobile"
+              name="username"
               placeholder={intl.formatMessage({
-                id: 'pages.login.phoneNumber.placeholder',
-                defaultMessage: 'Phone Number',
+                id: 'pages.register.username.placeholder',
+                defaultMessage: 'Username',
               })}
               rules={[
                 {
                   required: true,
                   message: (
                     <FormattedMessage
-                      id="pages.login.phoneNumber.required"
-                      defaultMessage="Please input your phone number!"
+                      id="pages.register.username.required"
+                      defaultMessage="Please input your user name!"
                     />
                   ),
                 },
                 {
-                  pattern: /^1\d{10}$/,
+                  pattern: /^\S+@\S+\.\S+$/,
                   message: (
                     <FormattedMessage
-                      id="pages.login.phoneNumber.invalid"
-                      defaultMessage="Phone number is invalid!"
+                      id="pages.register.username.invalid"
+                      defaultMessage="User name should be valid email!"
                     />
                   ),
                 },
               ]}
             />
-            <ProFormCaptcha
+            <ProFormText.Password
               fieldProps={{
                 size: 'large',
-                prefix: <MailOutlined className={styles.prefixIcon}/>,
+                prefix: <LockOutlined className={styles.prefixIcon}/>,
               }}
-              captchaProps={{
-                size: 'large',
-              }}
+              name="password"
               placeholder={intl.formatMessage({
-                id: 'pages.login.captcha.placeholder',
-                defaultMessage: 'Verification Code',
+                id: 'pages.register.password.placeholder',
+                defaultMessage: 'Password',
               })}
-              captchaTextRender={(timing, count) => {
-                if (timing) {
-                  return `${count} ${intl.formatMessage({
-                    id: 'pages.getCaptchaSecondText',
-                    defaultMessage: 'sec(s)',
-                  })}`;
-                }
-                return intl.formatMessage({
-                  id: 'pages.login.phoneLogin.getVerificationCode',
-                  defaultMessage: 'Get Code',
-                });
-              }}
-              name="captcha"
               rules={[
                 {
                   required: true,
                   message: (
                     <FormattedMessage
-                      id="pages.login.captcha.required"
-                      defaultMessage="Please input verification code!"
+                      id="pages.register.password.required"
+                      defaultMessage="Please input a password!"
+                    />
+                  ),
+                },
+                {
+                  pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
+                  message: (
+                    <FormattedMessage
+                      id="pages.register.password.invalid"
+                      defaultMessage="Password should be min 8 characters with atleast one uppercase, one lower case and one numeric character!"
                     />
                   ),
                 },
               ]}
-              onGetCaptcha={async (mobile) => {
-                const result = await getFakeCaptcha(mobile);
-                if (result === false) {
-                  return;
-                }
-                message.success('Get the verification code successfully! The verification code is：1234');
-              }}
             />
           </>
         )}
+
+        {actionTab === 'login' && (
         <div
           style={{
             marginBottom: 24,
@@ -242,7 +242,7 @@ const Login: React.FC<LoginProps> = (props) => {
           >
             <FormattedMessage id="pages.login.forgotPassword" defaultMessage="Forgot Password ?"/>
           </a>
-        </div>
+        </div>)}
       </ProForm>
       <Row justify="center"><Col span={8}>&nbsp;
       </Col><Col span={8}>&nbsp;

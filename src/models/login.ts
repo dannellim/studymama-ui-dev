@@ -2,7 +2,7 @@ import { stringify } from 'querystring';
 import type { Reducer, Effect } from 'umi';
 import { history } from 'umi';
 
-import { fakeAccountLogin } from '@/services/login';
+import { accountLogin } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { message } from 'antd';
@@ -34,17 +34,20 @@ const Model: LoginModelType = {
 
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: response,
-      });
+      const {data, response} = yield call(accountLogin, payload);
 
       // Login successfully
-      if (response.status === 'ok'|| response.token) {
+      if (response === undefined || !response.ok) {
+        message.error('Login Failed! \n Please check username / password.');
+      } else {
+        yield put({
+          type: 'changeLoginStatus',
+          payload: data,
+        });
+
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
-        message.success('🎉 🎉 🎉  Login successful!');
+        message.success('Login Successful!');
         let { redirect } = params as { redirect: string };
         if (redirect) {
           const redirectUrlParams = new URL(redirect);
@@ -64,10 +67,8 @@ const Model: LoginModelType = {
         history.replace(redirect || '/');
       }
     },
-
     logout() {
       const { redirect } = getPageQuery();
-      // Note: There may be security issues, please note
       if (window.location.pathname !== '/user/login' && !redirect) {
         history.replace({
           pathname: '/user/login',
@@ -84,8 +85,8 @@ const Model: LoginModelType = {
       setAuthority(payload.token);
       return {
         ...state,
-        status: ( payload.token )?"ok":"500",
-        type: payload.token,
+        status: ( payload.token )?"ok":"error",
+        type: 'user',
         token: payload.token,
       };
     },

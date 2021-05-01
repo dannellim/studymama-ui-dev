@@ -1,12 +1,10 @@
-import {Tag, Image} from 'antd';
+import {Tag} from 'antd';
 import type { Settings as ProSettings } from '@ant-design/pro-layout';
 import React from 'react';
 import type { ConnectProps } from 'umi';
 import { connect, SelectLang } from 'umi';
-import type { ConnectState } from '@/models/connect';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
-import logo from '../../assets/banner_new_3.png';
 
 export type GlobalHeaderRightProps = {
   theme?: ProSettings['navTheme'] | 'realDark';
@@ -19,32 +17,30 @@ const ENVTagColor = {
   pre: '#87d068',
 };
 
-const bannerClass = {
-  width: 500,
-  height: 200,
-}
-
 const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = (props) => {
   const { theme, layout } = props;
-  let className = styles.right;
+  let className = styles.right > {
+    height: 300,
+  };
 
   if (theme === 'dark' && layout === 'top') {
     className = `${styles.right}  ${styles.dark}`;
-  }
+  };
 
   return (
-    <div className={className}>
-      <Image src={logo} wrapperStyle={bannerClass}/>
-      <Avatar />
-      {REACT_APP_ENV && (
-        <span>
-          <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>
-        </span>
-      )}
-      <SelectLang className={styles.action} />
-    </div>
-  );
-};
+    <>
+      <div className={className}>
+          <Avatar />
+          {REACT_APP_ENV && (
+            <span>
+              <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>
+            </span>
+          )}
+          <SelectLang className={styles.action} />
+        </div>
+    </>
+    );
+  };
 
 export default connect(({ settings }: ConnectState) => ({
   theme: settings.navTheme,

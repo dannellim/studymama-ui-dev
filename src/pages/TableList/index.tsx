@@ -1,4 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons';
+import {PlusOutlined, SmileOutlined} from '@ant-design/icons';
 import { Button, message, Input, Drawer } from 'antd';
 import React, { useState, useRef } from 'react';
 import { useIntl, FormattedMessage } from 'umi';
@@ -8,101 +8,92 @@ import ProTable from '@ant-design/pro-table';
 import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
-import type { FormValueType } from './components/UpdateForm';
-import UpdateForm from './components/UpdateForm';
-import type { TableListItem } from './data.d';
-import { queryRule, updateRule, addRule, removeRule } from './service';
+import UpdateForm, {FormValueType} from './components/UpdateForm';
+import type {Post} from './data.d';
+import {allPost, updatePost, addPost, deletePost} from './service';
 
-/**
- * 添加节点
- *
- * @param fields
- */
-const handleAdd = async (fields: TableListItem) => {
-  const hide = message.loading('正在添加');
+const handleAdd = async (fields: Post) => {
+  const hide = message.loading('Adding..');
   try {
-    await addRule({ ...fields });
+    await addPost({ ...fields });
     hide();
-    message.success('添加成功');
+    message.success('Post added successfully');
     return true;
   } catch (error) {
     hide();
-    message.error('添加失败请重试！');
+    message.error('Failed to add post, please try again!');
     return false;
   }
 };
 
-/**
- * 更新节点
- *
- * @param fields
- */
-const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('正在配置');
-  try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
-    hide();
-
-    message.success('配置成功');
+const handleUpdate = async (post: Post, rating: number) => {
+  const hide = message.loading('Updating');
+  if (post && post.rating) {
+    try {
+      await updatePost(post);
+      hide();
+      message.success('Updation is successful.');
+      return true;
+    } catch (error) {
+      hide();
+      message.error('Updation failed, please try again!');
+      return false;
+    }
     return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
   }
+  return false;
 };
 
-/**
- * 删除节点
- *
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: TableListItem[]) => {
-  const hide = message.loading('正在删除');
+const handleRemove = async (selectedRows: Post[]) => {
+  const hide = message.loading('Deleting');
   if (!selectedRows) return true;
-  try {
-    await removeRule({
-      key: selectedRows.map((row) => row.key),
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
+  selectedRows.map((row) => row.id).forEach((idx) => {
+    try {
+      deletePost({
+        id: idx,
+      });
+      hide();
+      message.success('Post deleted successfully');
+      return true;
+    } catch (error) {
+      hide();
+      message.error('Deletion failed, please try again');
+      return false;
+    }
+  });
+  return true;
 };
 
-const TableList: React.FC = () => {
-  /** 新建窗口的弹窗 */
+async function handleUpdateForm(value: FormValueType) {
+  const post : Post = {
+    id: value.id,
+    rating: value.rating,
+  };
+  return handleUpdate(post, 0);
+}
+
+const PostList: React.FC = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  /** 分布更新窗口的弹窗 */
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<TableListItem>();
-  const [selectedRowsState, setSelectedRows] = useState<TableListItem[]>([]);
+  const [currentRow, setCurrentRow] = useState<Post>();
+  const [selectedRowsState, setSelectedRows] = useState<Post[]>([]);
 
-  /** 国际化配置 */
   const intl = useIntl();
 
-  const columns: ProColumns<TableListItem>[] = [
+  const columns: ProColumns<Post>[] = [
     {
       title: (
         <FormattedMessage
           id="pages.searchTable.updateForm.ruleName.nameLabel"
-          defaultMessage="规则名称"
+          defaultMessage="Post Title"
         />
       ),
       dataIndex: 'name',
-      tip: '规则名称是唯一的 key',
+      tip: 'Post Title is unique key',
       render: (dom, entity) => {
         return (
           <a
@@ -117,12 +108,12 @@ const TableList: React.FC = () => {
       },
     },
     {
-      title: <FormattedMessage id="pages.searchTable.titleDesc" defaultMessage="描述" />,
+      title: <FormattedMessage id="pages.searchTable.titleDesc" defaultMessage="Description" />,
       dataIndex: 'desc',
       valueType: 'textarea',
     },
     {
-      title: <FormattedMessage id="pages.searchTable.titleCallNo" defaultMessage="服务调用次数" />,
+      title: <FormattedMessage id="pages.searchTable.titleCallNo" defaultMessage="Number of service calls" />,
       dataIndex: 'callNo',
       sorter: true,
       hideInForm: true,
@@ -133,31 +124,31 @@ const TableList: React.FC = () => {
         })}`,
     },
     {
-      title: <FormattedMessage id="pages.searchTable.titleStatus" defaultMessage="状态" />,
+      title: <FormattedMessage id="pages.searchTable.titleStatus" defaultMessage="Status" />,
       dataIndex: 'status',
       hideInForm: true,
       valueEnum: {
         0: {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.default" defaultMessage="关闭" />
+            <FormattedMessage id="pages.searchTable.nameStatus.default" defaultMessage="Shutdown" />
           ),
           status: 'Default',
         },
         1: {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.running" defaultMessage="运行中" />
+            <FormattedMessage id="pages.searchTable.nameStatus.running" defaultMessage="Running" />
           ),
           status: 'Processing',
         },
         2: {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.online" defaultMessage="已上线" />
+            <FormattedMessage id="pages.searchTable.nameStatus.online" defaultMessage="Online" />
           ),
           status: 'Success',
         },
         3: {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.abnormal" defaultMessage="异常" />
+            <FormattedMessage id="pages.searchTable.nameStatus.abnormal" defaultMessage="Abnormal" />
           ),
           status: 'Error',
         },
@@ -165,7 +156,7 @@ const TableList: React.FC = () => {
     },
     {
       title: (
-        <FormattedMessage id="pages.searchTable.titleUpdatedAt" defaultMessage="上次调度时间" />
+        <FormattedMessage id="pages.searchTable.titleUpdatedAt" defaultMessage="Last Scheduled time" />
       ),
       sorter: true,
       dataIndex: 'updatedAt',
@@ -181,7 +172,7 @@ const TableList: React.FC = () => {
               {...rest}
               placeholder={intl.formatMessage({
                 id: 'pages.searchTable.exception',
-                defaultMessage: '请输入异常原因！',
+                defaultMessage: 'Please enter the reason for the exception!',
               })}
             />
           );
@@ -190,7 +181,7 @@ const TableList: React.FC = () => {
       },
     },
     {
-      title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="操作" />,
+      title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="Operating" />,
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
@@ -201,21 +192,47 @@ const TableList: React.FC = () => {
             setCurrentRow(record);
           }}
         >
-          <FormattedMessage id="pages.searchTable.config" defaultMessage="配置" />
+          <FormattedMessage id="pages.searchTable.config" defaultMessage="Configuration" />
         </a>,
-        <a key="subscribeAlert" href="https://procomponents.ant.design/">
-          <FormattedMessage id="pages.searchTable.subscribeAlert" defaultMessage="订阅警报" />
-        </a>,
+          <div>
+            <a key="upVote" href="#"
+               onSubmit={async (value) => {
+                 const success = await handleUpdate(record, 1);
+                 if (success) {
+                   handleUpdateModalVisible(false);
+                   setCurrentRow(undefined);
+                   if (actionRef.current) {
+                     actionRef.current.reload();
+                   }
+                 }
+               }}>
+              <SmileOutlined style={{fontSize: 16}}/>
+            </a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a key="downVote" href="#"
+               onSubmit={async (value) => {
+                 const success = await handleUpdate(record, -1);
+                 if (success) {
+                   handleUpdateModalVisible(false);
+                   setCurrentRow(undefined);
+                   if (actionRef.current) {
+                     actionRef.current.reload();
+                   }
+                 }
+               }}>
+              <SmileOutlined rotate={180} style={{fontSize: 16}}/>
+            </a>
+          </div>,
       ],
     },
   ];
 
   return (
     <PageContainer>
-      <ProTable<TableListItem>
+      <ProTable<Post>
         headerTitle={intl.formatMessage({
           id: 'pages.searchTable.title',
-          defaultMessage: '查询表格',
+          defaultMessage: 'Search Results',
         })}
         actionRef={actionRef}
         rowKey="key"
@@ -230,10 +247,11 @@ const TableList: React.FC = () => {
               handleModalVisible(true);
             }}
           >
-            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="新建" />
+            <PlusOutlined />
+            <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
           </Button>,
         ]}
-        request={(params, sorter, filter) => queryRule({ ...params, sorter, filter })}
+        request={(params, sorter, filter) => allPost({ ...params, sorter, filter })}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
@@ -245,45 +263,45 @@ const TableList: React.FC = () => {
         <FooterToolbar
           extra={
             <div>
-              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="已选择" />{' '}
+              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
               <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-              <FormattedMessage id="pages.searchTable.item" defaultMessage="项" />
+              <FormattedMessage id="pages.searchTable.item" defaultMessage="Item" />
               &nbsp;&nbsp;
               <span>
                 <FormattedMessage
                   id="pages.searchTable.totalServiceCalls"
                   defaultMessage="服务调用次数总计"
                 />{' '}
-                {selectedRowsState.reduce((pre, item) => pre + item.callNo, 0)}{' '}
-                <FormattedMessage id="pages.searchTable.tenThousand" defaultMessage="万" />
+                {selectedRowsState.reduce((pre, item) => pre + (item.id || 0), 0)}{' '}
+                <FormattedMessage id="pages.searchTable.tenThousand" defaultMessage="Ten Thousand" />
               </span>
             </div>
           }
         >
-          <Button
-            onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
-            }}
-          >
-            <FormattedMessage id="pages.searchTable.batchDeletion" defaultMessage="批量删除" />
-          </Button>
-          <Button type="primary">
-            <FormattedMessage id="pages.searchTable.batchApproval" defaultMessage="批量审批" />
-          </Button>
-        </FooterToolbar>
+        <Button
+          onClick={async () => {
+            await handleRemove(selectedRowsState);
+            setSelectedRows([]);
+            actionRef.current?.reloadAndRest?.();
+          }}
+        >
+          <FormattedMessage id="pages.searchTable.batchDeletion" defaultMessage="Batch Deletion" />
+        </Button>
+        <Button type="primary">
+          <FormattedMessage id="pages.searchTable.batchApproval" defaultMessage="Batch Approval" />
+        </Button>
+      </FooterToolbar>
       )}
       <ModalForm
         title={intl.formatMessage({
-          id: 'pages.searchTable.createForm.newRule',
-          defaultMessage: '新建规则',
+          id: 'pages.searchTable.createForm.newPost',
+          defaultMessage: 'New Post',
         })}
         width="400px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
         onFinish={async (value) => {
-          const success = await handleAdd(value as TableListItem);
+          const success = await handleAdd(value as Post);
           if (success) {
             handleModalVisible(false);
             if (actionRef.current) {
@@ -299,7 +317,7 @@ const TableList: React.FC = () => {
               message: (
                 <FormattedMessage
                   id="pages.searchTable.ruleName"
-                  defaultMessage="规则名称为必填项"
+                  defaultMessage="Rule name is required"
                 />
               ),
             },
@@ -311,7 +329,7 @@ const TableList: React.FC = () => {
       </ModalForm>
       <UpdateForm
         onSubmit={async (value) => {
-          const success = await handleUpdate(value);
+          const success = await handleUpdateForm(value);
           if (success) {
             handleUpdateModalVisible(false);
             setCurrentRow(undefined);
@@ -327,7 +345,6 @@ const TableList: React.FC = () => {
         updateModalVisible={updateModalVisible}
         values={currentRow || {}}
       />
-
       <Drawer
         width={600}
         visible={showDetail}
@@ -337,17 +354,17 @@ const TableList: React.FC = () => {
         }}
         closable={false}
       >
-        {currentRow?.name && (
-          <ProDescriptions<TableListItem>
+        {currentRow?.title && (
+          <ProDescriptions<Post>
             column={2}
-            title={currentRow?.name}
+            title={currentRow?.title}
             request={async () => ({
               data: currentRow || {},
             })}
             params={{
-              id: currentRow?.name,
+              id: currentRow?.title,
             }}
-            columns={columns as ProDescriptionsItemProps<TableListItem>[]}
+            columns={columns as ProDescriptionsItemProps<Post>[]}
           />
         )}
       </Drawer>
@@ -355,4 +372,4 @@ const TableList: React.FC = () => {
   );
 };
 
-export default TableList;
+export default PostList;
