@@ -1,11 +1,12 @@
 import {
-  AppleFilled, GoogleCircleFilled,
+  AppleFilled,
+  GoogleCircleFilled,
   LockOutlined,
   MailOutlined,
   FacebookFilled,
   UserOutlined,
 } from '@ant-design/icons';
-import {Alert, Space, Tabs, Row, Col} from 'antd';
+import { Alert, Space, Tabs, Row, Col } from 'antd';
 import React, { useState } from 'react';
 import ProForm, { ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, connect, FormattedMessage } from 'umi';
@@ -39,7 +40,8 @@ const LoginMessage: React.FC<{
 const Login: React.FC<LoginProps> = (props) => {
   const { userLogin = {}, submitting } = props;
   const { status, type: loginType } = userLogin;
-  const [ actionTab, setActionTab ] = useState<string>('login');
+  const [actionTab, setActionTab] = useState<string>('login');
+
   const intl = useIntl();
 
   const handleSubmit = (values: LoginParamsType) => {
@@ -51,7 +53,7 @@ const Login: React.FC<LoginProps> = (props) => {
   };
   const handleRegister = (values: RegisterParamsType) => {
     const { dispatch } = props;
-    const role = "ROLE_USER";
+    const role = 'ROLE_USER';
     dispatch({
       type: 'register/register',
       payload: { ...values, role },
@@ -60,6 +62,7 @@ const Login: React.FC<LoginProps> = (props) => {
   return (
     <div className={styles.main}>
       <ProForm
+        name="userForm"
         initialValues={{
           autoLogin: true,
         }}
@@ -82,7 +85,7 @@ const Login: React.FC<LoginProps> = (props) => {
           return Promise.resolve();
         }}
       >
-        <Tabs activeKey={actionTab} onChange={setActionTab}>
+        <Tabs activeKey={actionTab} onChange={setActionTab} onTabClick={() => userForm.reset()}>
           <Tabs.TabPane
             key="login"
             tab={intl.formatMessage({
@@ -113,7 +116,7 @@ const Login: React.FC<LoginProps> = (props) => {
               name="username"
               fieldProps={{
                 size: 'large',
-                prefix: <UserOutlined className={styles.prefixIcon}/>,
+                prefix: <UserOutlined className={styles.prefixIcon} />,
               }}
               placeholder={intl.formatMessage({
                 id: 'pages.login.username.placeholder',
@@ -135,7 +138,7 @@ const Login: React.FC<LoginProps> = (props) => {
               name="password"
               fieldProps={{
                 size: 'large',
-                prefix: <LockOutlined className={styles.prefixIcon}/>,
+                prefix: <LockOutlined className={styles.prefixIcon} />,
               }}
               placeholder={intl.formatMessage({
                 id: 'pages.login.password.placeholder',
@@ -157,14 +160,14 @@ const Login: React.FC<LoginProps> = (props) => {
         )}
 
         {status === 'error' && loginType === 'register' && !submitting && (
-          <LoginMessage content="Verification code error"/>
+          <LoginMessage content="Verification code error" />
         )}
         {actionTab === 'register' && (
           <>
             <ProFormText
               fieldProps={{
                 size: 'large',
-                prefix: <MailOutlined className={styles.prefixIcon}/>,
+                prefix: <MailOutlined className={styles.prefixIcon} />,
               }}
               name="username"
               placeholder={intl.formatMessage({
@@ -195,7 +198,7 @@ const Login: React.FC<LoginProps> = (props) => {
             <ProFormText.Password
               fieldProps={{
                 size: 'large',
-                prefix: <LockOutlined className={styles.prefixIcon}/>,
+                prefix: <LockOutlined className={styles.prefixIcon} />,
               }}
               name="password"
               placeholder={intl.formatMessage({
@@ -227,41 +230,43 @@ const Login: React.FC<LoginProps> = (props) => {
         )}
 
         {actionTab === 'login' && (
-        <div
-          style={{
-            marginBottom: 24,
-          }}
-        >
-          <ProFormCheckbox noStyle name="autoLogin">
-            <FormattedMessage id="pages.login.rememberMe" defaultMessage="Remember me"/>
-          </ProFormCheckbox>
-          <a
+          <div
             style={{
-              float: 'right',
+              marginBottom: 24,
             }}
           >
-            <FormattedMessage id="pages.login.forgotPassword" defaultMessage="Forgot Password ?"/>
-          </a>
-        </div>)}
+            <ProFormCheckbox noStyle name="autoLogin">
+              <FormattedMessage id="pages.login.rememberMe" defaultMessage="Remember me" />
+            </ProFormCheckbox>
+            <a
+              style={{
+                float: 'right',
+              }}
+            >
+              <FormattedMessage
+                id="pages.login.forgotPassword"
+                defaultMessage="Forgot Password ?"
+              />
+            </a>
+          </div>
+        )}
       </ProForm>
-      <Row justify="center"><Col span={8}>&nbsp;
-      </Col><Col span={8}>&nbsp;
-      </Col>
-        <Col span={8}>&nbsp;
-        </Col>
+      <Row justify="center">
+        <Col span={8}>&nbsp;</Col>
+        <Col span={8}>&nbsp;</Col>
+        <Col span={8}>&nbsp;</Col>
       </Row>
-        <Row justify="center">
-          <Col span={8}>&nbsp;</Col>
-          <Col span={8}>
-            <Space>
-              <GoogleCircleFilled className={styles.icon}/>
-              <FacebookFilled className={styles.icon}/>
-              <AppleFilled className={styles.icon}/>
-            </Space>
-          </Col>
-          <Col span={8}>&nbsp;
-          </Col>
-        </Row>
+      <Row justify="center">
+        <Col span={8}>&nbsp;</Col>
+        <Col span={8}>
+          <Space>
+            <GoogleCircleFilled className={styles.icon} />
+            <FacebookFilled className={styles.icon} />
+            <AppleFilled className={styles.icon} />
+          </Space>
+        </Col>
+        <Col span={8}>&nbsp;</Col>
+      </Row>
     </div>
   );
 };
