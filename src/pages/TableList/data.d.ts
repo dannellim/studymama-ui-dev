@@ -37,7 +37,6 @@ export type PostList = {
   pagination: Partial<TableListPagination>;
 };
 
-
 export type PostListParams = {
   keyword?: string;
   category?: string;
@@ -46,32 +45,6 @@ export type PostListParams = {
   filter?: Record<string, any[]>;
   sorter?: Record<string, any>;
 };
-
-export type GeoPoint = {
-  lat: number;
-  lon: number;
-}
-
-export type Picture = {
-  link1: string;
-  link2: string;
-}
-
-export type Post = {
-  id?: number;
-  title?: string;
-  description?: string;
-  website?: string;
-  location?: GeoPoint;
-  status?: string;
-  post_dt?: string;
-  edited_dt?: string;
-  price?: string;
-  category?: string;
-  picture?: Picture;
-  accountId?: string;
-  rating?: number;
-}
 
 export type PostListPagination = {
   total: number;

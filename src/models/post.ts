@@ -1,22 +1,54 @@
 import type { Reducer, Effect } from 'umi';
-import { registerAccount } from '@/services/register';
-import { setAuthority } from '@/utils/authority';
+import { searchPostsByKeywords, searchPostsByCategory, getPost, updatePost, getCategories} from '@/services/post';
 import { message } from 'antd';
+
+export type Post = {
+  id?: number;
+  title?: string;
+  description?: string;
+  website?: string;
+  location?: GeoPoint;
+  status?: string;
+  post_dt?: string;
+  edited_dt?: string;
+  price?: string;
+  category?: string;
+  picture?: Picture;
+  accountId?: string;
+  rating?: number;
+}
+
+export type GeoPoint = {
+  lat: number;
+  lon: number;
+}
+
+export type Picture = {
+  link1: string;
+  link2: string;
+}
 
 export type PostStateType = {
   status?: 'ok' | 'error';
-  type?: string;
-  currentAuthority?: 'user' | 'guest' | 'admin';
+  post?: Post | Post[];
+  category?: string | string[];
 };
 
 export type PostModelType = {
   namespace: string;
-  state: StateType;
+  state: PostStateType;
   effects: {
-    register: Effect;
+    searchByKeywords: Effect;
+    searchByCategory: Effect;
+    get: Effect;
+    update: Effect;
+    category: Effect;
   };
   reducers: {
-    registerUser: Reducer<PostStateType>;
+    searchPosts: Reducer<PostStateType>;
+    getPost: Reducer<PostStateType>;
+    putPost: Reducer<PostStateType>;
+    getCategories: Reducer<PostStateType>;
   };
 };
 
@@ -25,37 +57,95 @@ const PostModel: PostModelType = {
 
   state: {
     status: undefined,
+    post: [],
+    category: [],
   },
 
   effects: {
-    *search({ payload }, { call, put }) {
-      const { data, response } = yield call(registerAccount, payload);
+    *searchByKeywords({ payload }, { call, put }) {
+      const { data, response } = yield call(searchPostsByKeywords, payload);
       if (response && response.ok) {
-        message.success(
-          `User ${data.username} registered successfully. User Id: ${data.user_profile_id}`,
-        );
         yield put({
-          type: 'registerUser',
+          type: 'searchPosts',
           payload: data,
         });
       } else {
-        message.error('User registration failed.');
+        message.error('No matching search results.');
+      }
+    },
+    *searchByCategory({ payload }, { call, put }) {
+      const { data, response } = yield call(searchPostsByCategory, payload);
+      if (response && response.ok) {
+        yield put({
+          type: 'searchPosts',
+          payload: data,
+        });
+      } else {
+        message.error('No matching search results.');
+      }
+    },
+    *get({ payload }, { call, put }) {
+      const { data, response } = yield call(getPost, payload);
+      if (response && response.ok) {
+        yield put({
+          type: 'getPost',
+          payload: data,
+        });
+      } else {
+        message.error('Unable to fetch post details.');
+      }
+    },
+    *update({ payload }, { call, put }) {
+      const { data, response } = yield call(updatePost, payload);
+      if (response && response.ok) {
+        yield put({
+          type: 'putPost',
+          payload: data,
+        });
+      } else {
+        message.error('Failed to update post.');
+      }
+    },
+    *category({ payload }, { call, put }) {
+      const { data, response } = yield call(getCategories);
+      if (response && response.ok && data) {
+        yield put({
+          type: 'getCategories',
+          payload: data,
+        });
+      } else {
+        message.error('Failed to fetch categories.');
       }
     },
   },
 
   reducers: {
-    searchPost(state, { payload }) {
-      if (payload.role === 'ROLE_USER') {
-        setAuthority('user');
-      } else {
-        setAuthority('guest');
-      }
+    searchPosts(state, { payload }) {
       return {
         ...state,
-        status: payload.token !== undefined ? 'ok' : 'error',
-        type: payload.token,
-        token: payload.token,
+        status: payload.results !== undefined ? 'ok' : 'error',
+        post: payload.results,
+      };
+    },
+    getPost(state, { payload }) {
+      return {
+        ...state,
+        status: payload.results !== undefined ? 'ok' : 'error',
+        post: payload.results,
+      };
+    },
+    putPost(state, { payload }) {
+      return {
+        ...state,
+        status: payload.results !== undefined ? 'ok' : 'error',
+        post: payload.results,
+      };
+    },
+    getCategories(state, { payload }) {
+      return {
+        ...state,
+        status: payload.results !== undefined ? 'ok' : 'error',
+        category: payload.results,
       };
     },
   },

@@ -46,12 +46,23 @@ function createRequest() {
     getResponse: true,
     headers: // Does the default request bring cookie
       {
-        'Access-Control-Allow-Origin': 'http://localhost:8080',
-        Authorization: JSON.stringify(getAuthority("token")),
+        'Access-Control-Allow-Origin': JSON.stringify("http://localhost:8000"),
       }
   });
   return myRequest;
 }
-const request =  createRequest();
-
+function createRequestWithAuthorization() {
+  const myRequest = extend({
+    errorHandler, // default error handling
+    getResponse: true,
+    headers: // Does the default request bring cookie
+      {
+        'Access-Control-Allow-Origin': JSON.stringify("http://localhost:8000"),
+        Authorization: JSON.stringify("Bearer " + getAuthority()[0]),
+      }
+  });
+  return myRequest;
+}
+const request =  createRequestWithAuthorization();
+export const authorizedRequest = createRequestWithAuthorization();
 export default request;
