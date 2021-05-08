@@ -1,0 +1,65 @@
+{
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "containerDefinitions": [
+        {
+            "name": "studymama-react-ui",
+            "image": "336218866683.dkr.ecr.ap-southeast-1.amazonaws.com/studymama-react-ui-repo:latest",
+            "memoryReservation": "1024",
+            "cpu": "512",
+            "resourceRequirements": null,
+            "essential": true,
+            "portMappings": [
+                {
+                    "containerPort": "8001",
+                    "protocol": "tcp"
+                }
+            ],
+            "entryPoint": [
+                "\"yarn\"",
+                "\"start\""
+            ],
+            "command": [],
+            "environment": null,
+            "environmentFiles": [],
+            "secrets": null,
+            "mountPoints": null,
+            "volumesFrom": null,
+            "hostname": null,
+            "user": null,
+            "workingDirectory": null,
+            "extraHosts": null,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/studymama-react-ui-service-lb",
+                    "awslogs-region": "ap-southeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "ulimits": null,
+            "dockerLabels": null,
+            "dependsOn": null,
+            "healthCheck": {
+                "command": [
+                    "CMD-SHELL",
+                    "curl --fail http://localhost:8001/ || exit 1"
+                ],
+                "interval": "30",
+                "timeout": "5",
+                "startPeriod": "300",
+                "retries": "10"
+            },
+            "repositoryCredentials": null
+        }
+    ],
+    "volumes": [],
+    "networkMode": "awsvpc",
+    "memory": "1024",
+    "cpu": "512",
+    "executionRoleArn": "arn:aws:iam::336218866683:role/ecsTaskExecutionRole",
+    "family": "studymama-react-ui-service-lb",
+    "taskRoleArn": "arn:aws:iam::336218866683:role/ecsTaskExecutionRole",
+    "tags": []
+}
