@@ -4,10 +4,9 @@
     "containerDefinitions": [
         {
             "dnsSearchDomains": null,
-            "environmentFiles": null,
+            "environmentFiles": [],
             "logConfiguration": {
                 "logDriver": "awslogs",
-                "secretOptions": null,
                 "options": {
                     "awslogs-group": "/ecs/studymama-react-ui-service-lb",
                     "awslogs-region": "ap-southeast-1",
@@ -20,27 +19,25 @@
             ],
             "portMappings": [
                 {
-                    "hostPort": 8001,
-                    "protocol": "tcp",
-                    "containerPort": 8001
+                    "containerPort": "8000",
+                    "protocol": "tcp"
                 }
             ],
-            "command": [],
+            "command": null,
             "linuxParameters": null,
             "cpu": 512,
-            "environment": [],
+            "environment": null,
             "resourceRequirements": null,
             "ulimits": null,
             "dnsServers": null,
-            "mountPoints": [],
+            "mountPoints": null,
             "workingDirectory": null,
             "secrets": null,
             "dockerSecurityOptions": null,
-            "memory": null,
             "memoryReservation": 1024,
-            "volumesFrom": [],
+            "volumesFrom": null,
             "stopTimeout": null,
-            "image": "336218866683.dkr.ecr.ap-southeast-1.amazonaws.com/studymama-react-ui-repo:latest",
+            "image": "336218866683.dkr.ecr.ap-southeast-1.amazonaws.com/studymama-react-ui-repo:11c0aa803cf1a1e898c601d72f5ce7665aa666ae",
             "startTimeout": null,
             "firelensConfiguration": null,
             "dependsOn": null,
@@ -66,7 +63,10 @@
             "dockerLabels": null,
             "systemControls": null,
             "privileged": null,
-            "name": "studymama-react-ui"
+            "name": "studymama-react-ui",
+            "repositoryCredentials": {
+                "credentialsParameter": ""
+            }
         }
     ],
     "memory": "2048",
