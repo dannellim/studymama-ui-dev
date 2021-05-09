@@ -21,3 +21,13 @@ export const isAntDesignProOrDev = (): boolean => {
 };
 
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
+
+export const getStudyMamaUi = (): string => {
+  const {STUDYMAMA_UI} = process.env
+  return STUDYMAMA_UI || "*";
+};
+
+export const getApiBaseUrl = (): string => {
+  const {API_URL} = process.env
+  return API_URL || 'http://localhost:8080';
+};

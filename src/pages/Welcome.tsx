@@ -47,6 +47,7 @@ const WelcomePage: React.FC<SearchProps> = (props) => {
   const { keyword, category, categoryList = getCategoryList() } = welcomeUser;
   const {} = useState({});
   const intl = useIntl();
+  console.log(submitting);
 
   function getCategoryList() {
     const categoryList: Word[] = [];

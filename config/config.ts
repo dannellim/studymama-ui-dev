@@ -1,12 +1,17 @@
-// https://umijs.org/config/
-import { defineConfig } from 'umi';
+
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
+import {defineConfig} from "umi";
 
-const { REACT_APP_ENV } = process.env;
+const { REACT_APP_ENV, API_URL, STUDYMAMA_UI } = process.env;
 
 export default defineConfig({
+  define: {
+    'process.env.REACT_APP_ENV': REACT_APP_ENV,
+    'process.env.API_URL': API_URL,
+    'process.env.STUDYMAMA_UI': STUDYMAMA_UI,
+  },
   hash: true,
   antd: {},
   dva: {
@@ -16,10 +21,8 @@ export default defineConfig({
     type: 'browser',
   },
   locale: {
-    // default zh-CN
     default: 'en-US',
     antd: true,
-    // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: true,
   },
   dynamicImport: {
@@ -28,9 +31,7 @@ export default defineConfig({
   targets: {
     ie: 11,
   },
-  // umi routes: https://umijs.org/docs/routing
   routes,
-  // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': defaultSettings.primaryColor,
   },
@@ -40,7 +41,6 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
-  // 快速刷新功能 https://umijs.org/config#fastrefresh
   fastRefresh: {},
-  esbuild: {},
-});
+  esbuild: {}
+},);

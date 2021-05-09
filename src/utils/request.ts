@@ -1,6 +1,7 @@
 import {extend} from 'umi-request';
 import { notification } from 'antd';
 import {getAuthority} from "@/utils/authority";
+import {getStudyMamaUi} from "@/utils/utils";
 
 const codeMessage: { [status: number]: string } = {
   200: 'The server successfully returned the requested data.',
@@ -40,25 +41,14 @@ const errorHandler = (error: { response: Response }): Response => {
   return response;
 };
 
-function createRequest() {
-  const myRequest = extend({
-    errorHandler, // default error handling
-    getResponse: true,
-    headers: // Does the default request bring cookie
-      {
-        'Access-Control-Allow-Origin': JSON.stringify("http://localhost:8000"),
-      }
-  });
-  return myRequest;
-}
 function createRequestWithAuthorization() {
   const myRequest = extend({
     errorHandler, // default error handling
     getResponse: true,
     headers: // Does the default request bring cookie
       {
-        'Access-Control-Allow-Origin': JSON.stringify("http://localhost:8000"),
-        Authorization: JSON.stringify("Bearer " + getAuthority()[0]),
+        'Access-Control-Allow-Origin': JSON.stringify(getStudyMamaUi()),
+        Authorization: JSON.stringify(getAuthority() !== undefined? 'Bearer ' + getAuthority()[0]: 'none'),
       }
   });
   return myRequest;

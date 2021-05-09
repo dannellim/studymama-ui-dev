@@ -1,7 +1,6 @@
-const { API_URL } = process.env;
-console.log(API_URL);
+import {getApiBaseUrl} from "@/utils/utils";
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = getApiBaseUrl();
 export const REFRESH_TOKEN = `${BASE_URL}/refreshtoken`;
 export const AUTHENTICATE = `${BASE_URL}/authenticate`;
 export const REGISTER = `${BASE_URL}/register`;
