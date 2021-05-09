@@ -12,9 +12,8 @@ export async function query(): Promise<any> {
 export async function queryCurrent(params: LoginParamsType): Promise<any> {
   return request(GET_PROFILE,
     {
-      method: 'GET',
-      data: {},
-      params: {
+      method: 'POST',
+      data: {
         'username': params.username,
         'password': '',
         'role': '',

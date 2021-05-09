@@ -72,12 +72,17 @@ const WelcomePage: React.FC<SearchProps> = (props) => {
     });
   }
 
-  const searchForCategory = (values: PostParamsType) => {
-      message.success(`searching posts for : ${values.category}`);
+  const searchForCategory = (value: PostParamsType) => {
+      console.log(value.category || value.key);
+      message.success(`searching posts for : ${value.category || value.key}`);
       const { dispatch } = props;
       dispatch({
         type: 'post/searchByCategory',
-        payload: { category: values.category },
+        payload: {
+          category: value.category || value.key,
+          currentPage: 1,
+          pageSize: 1,
+        },
       });
     }
 
@@ -187,3 +192,4 @@ export default connect(({ keyword, category, post, currentPage, pageSize, loadin
     }
   })
 )(WelcomePage);
+

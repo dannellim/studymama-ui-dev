@@ -9,6 +9,7 @@ import {Word} from "react-wordcloud";
 export type PostParamsType = {
   categoryList?: Word[],
   category?: string,
+  key?: string,
   keyword?: string,
   currentPage?: number,
   pageSize?: number,
@@ -30,11 +31,15 @@ export async function searchPostsByKeywords(params: PostParamsType) {
 }
 
 export async function searchPostsByCategory(params: PostParamsType) {
-  const paramString = JSON.stringify(params);
   return request(SEARCH_POST_BY_CATEGORY,
     {
       method: 'GET',
-      data: paramString,
+      data: {},
+      params: {
+        category: params.category,
+        currentPage: params.currentPage,
+        pageSize: params.pageSize,
+      },
       headers: {
         'Content-Type': 'application/json',
       }
