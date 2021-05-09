@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
 import {Card, Alert, Image, Typography, Row, Col, message} from 'antd';
-import { useIntl, connect, FormattedMessage } from 'umi';
+import {useIntl, connect, FormattedMessage} from 'umi';
 import styles from './Welcome.less';
 import train from '../assets/train-hand.svg';
 import fastFood from '../assets/fast-food.svg';
@@ -37,7 +37,7 @@ const SearchCategoryCard: React.FC<{
     <Card bodyStyle={{alignContent: "center"}}>
       <CodePreview>
         <FormattedMessage id="pages.welcome.search.keywords" defaultMessage="Popular Searches" /><br/>
-        <ReactWordcloud words={categories || []} callbacks={{onWordClick: onWordClickAction}}/>
+        <ReactWordcloud words={categories || []} callbacks={{onWordClick: onWordClickAction}} />
       </CodePreview>
     </Card>
 );
@@ -50,15 +50,17 @@ const WelcomePage: React.FC<SearchProps> = (props) => {
   console.log(submitting);
 
   function getCategoryList() {
-    const categoryList: Word[] = [];
-    for(var category in getCategoryListSvc().values()) {
-      categoryList.push({
-            key: category,
-            text: category,
-            value: 10,
-          });
-    };
-    return categoryList;
+    const categoryList: string[] = getCategoryListSvc();
+    const wordList: Word[] = [];
+
+    categoryList.forEach((value) => {
+      wordList.push({
+        key: value,
+        text: value,
+        value: 10,
+      });
+    });
+    return wordList;
   }
 
   const searchForKeyword = (values: PostParamsType) => {
@@ -96,7 +98,6 @@ const WelcomePage: React.FC<SearchProps> = (props) => {
           }}
         />
       </Card>
-
       <div>
         <Row gutter={16}>
           <Col span={24}>

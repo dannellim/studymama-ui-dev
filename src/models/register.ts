@@ -54,7 +54,7 @@ const RegisterModel: RegisterModelType = {
       return {
         ...state,
         status: payload.token !== undefined ? 'ok' : 'error',
-        type: payload.token,
+        type: 'login',
         token: payload.token,
       };
     },

@@ -1,6 +1,6 @@
 import {extend} from 'umi-request';
 import { notification } from 'antd';
-import {getAuthority} from "@/utils/authority";
+import {getToken} from "@/utils/authority";
 import {getStudyMamaUi} from "@/utils/utils";
 
 const codeMessage: { [status: number]: string } = {
@@ -48,7 +48,7 @@ function createRequestWithAuthorization() {
     headers: // Does the default request bring cookie
       {
         'Access-Control-Allow-Origin': JSON.stringify(getStudyMamaUi()),
-        Authorization: JSON.stringify(getAuthority() !== undefined? 'Bearer ' + getAuthority()[0]: 'none'),
+        Authorization: 'Bearer ' + getToken(),
       }
   });
   return myRequest;

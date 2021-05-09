@@ -1,4 +1,4 @@
-import request, {authorizedRequest} from "@/utils/request";
+import request from "@/utils/request";
 import {allPost, searchPostByCategory, searchPostByKeywordInTitleDescCategory} from "@/pages/TableList/service";
 import {GET_CATEGORIES, SEARCH_POST_BY_CATEGORY, SEARCH_POST_BY_KEYWORD} from "@/services/resourceUrl";
 import {GET_POST} from "@/services/resourceUrl";
@@ -78,8 +78,10 @@ export async function updatePost(params: PostParamsType) {
 }
 
 export function getCategoryListSvc() {
-  var categoryList: string[] = [];
-  getCategories().then((response) => categoryList.push(response.data)).catch((error) => categoryList = []);
+  var categoryList: string[] = CATEGORY_LIST.slice();
+  getCategories()
+    .then((response) => categoryList.push(response.data))
+    .catch((error) => categoryList = CATEGORY_LIST.slice());
   return categoryList;
 }
 
@@ -259,3 +261,16 @@ export default {
   'GET /post': getPost,
   //'POST /post': postPost,
 };
+
+const CATEGORY_LIST: string[] = [
+  "Groceries",
+  "Restuarant",
+  "Takeout",
+  "Hotels",
+  "Banks",
+  "Gas Station",
+  "Parking Lots",
+  "Pharmacies",
+  "Post Offices",
+  "Medical"
+  ];

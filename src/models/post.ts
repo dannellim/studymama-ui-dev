@@ -69,6 +69,7 @@ const PostModel: PostModelType = {
           type: 'searchPosts',
           payload: data,
         });
+        window.location.href = '/list';
       } else {
         message.error('No matching search results.');
       }
@@ -80,6 +81,7 @@ const PostModel: PostModelType = {
           type: 'searchPosts',
           payload: data,
         });
+        window.location.href = '/list';
       } else {
         message.error('No matching search results.');
       }

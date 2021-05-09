@@ -31,3 +31,10 @@ export const getApiBaseUrl = (): string => {
   const {API_URL} = process.env
   return API_URL || 'http://localhost:8080';
 };
+
+
+export const getContentAppUrl = (): string => {
+  const {CONTENT_APP_URL} = process.env
+  return CONTENT_APP_URL || 'http://www.yahoo.com';
+};
+

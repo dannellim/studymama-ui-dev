@@ -3,13 +3,17 @@ import type { Reducer, Effect } from 'umi';
 import { history } from 'umi';
 
 import { accountLogin } from '@/services/login';
-import { setAuthority } from '@/utils/authority';
-import { getPageQuery } from '@/utils/utils';
+import { setToken} from '@/utils/authority';
+import { getContentAppUrl, getPageQuery } from '@/utils/utils';
 import { message } from 'antd';
+import {queryCurrent} from "@/services/user";
+import {CurrentUser, UserModelState} from "@/models/user";
 
 export type StateType = {
   status?: 'ok' | 'error';
   type?: string;
+  token?: string;
+  currentUser?: CurrentUser;
   currentAuthority?: 'user' | 'guest' | 'admin';
 };
 
@@ -22,6 +26,7 @@ export type LoginModelType = {
   };
   reducers: {
     changeLoginStatus: Reducer<StateType>;
+    updateUserProfile: Reducer<UserModelState>;
   };
 };
 
@@ -44,27 +49,18 @@ const Model: LoginModelType = {
           type: 'changeLoginStatus',
           payload: data,
         });
-
-        const urlParams = new URL(window.location.href);
-        const params = getPageQuery();
         message.success('Login Successful!');
-        let { redirect } = params as { redirect: string };
-        if (redirect) {
-          const redirectUrlParams = new URL(redirect);
-          if (redirectUrlParams.origin === urlParams.origin) {
-            redirect = redirect.substr(urlParams.origin.length);
-            if (window.routerBase !== '/') {
-              redirect = redirect.replace(window.routerBase, '/');
-            }
-            if (redirect.match(/^\/.*#/)) {
-              redirect = redirect.substr(redirect.indexOf('#') + 1);
-            }
-          } else {
-            window.location.href = '/';
-            return;
-          }
+        const {userProfileData, userProfileResponse} = yield call(queryCurrent, payload);
+        if (userProfileResponse === undefined || !userProfileResponse.ok) {
+          message.error('Unable to load user profile...');
+        } else {
+          yield put({
+            type: 'updateUserProfile',
+            userProfile: userProfileData,
+          });
         }
-        history.replace(redirect || '/');
+
+        window.location.href = '/' + getContentAppUrl();
       }
     },
     logout() {
@@ -82,12 +78,26 @@ const Model: LoginModelType = {
 
   reducers: {
     changeLoginStatus(state, { payload }) {
-      setAuthority(payload.token);
+      setToken(payload.token);
       return {
         ...state,
         status: ( payload.token )?"ok":"error",
         type: 'user',
         token: payload.token,
+      };
+    },
+    updateUserProfile(state, { userProfile }) {
+      return {
+        ...state,
+        currentUser: {
+          name: userProfile.firstName + ' ' + userProfile.lastName,
+          userid: userProfile.id,
+          tags: [
+            {'key': 'contact', 'label': userProfile.contact},
+            {'key': 'address', 'label': userProfile.address},
+            {'key': 'lastModifiedDate', 'label': userProfile.lastModifiedDate},
+          ],
+        },
       };
     },
   },
