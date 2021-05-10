@@ -40,7 +40,6 @@ const Model: LoginModelType = {
   effects: {
     *login({ payload }, { call, put }) {
       const {data, response} = yield call(accountLogin, payload);
-
       // Login successfully
       if (response === undefined || !response.ok) {
         message.error('Login Failed! \n Please check username / password.');
@@ -50,13 +49,13 @@ const Model: LoginModelType = {
           payload: data,
         });
         message.success('Login Successful!');
-        const {userProfileData, userProfileResponse} = yield call(queryCurrent, payload);
-        if (userProfileResponse === undefined || !userProfileResponse.ok) {
+        const userProfile = yield call(queryCurrent, payload);
+        if (userProfile.response === undefined || !userProfile.response.ok) {
           message.error('Unable to load user profile...');
         } else {
           yield put({
             type: 'updateUserProfile',
-            userProfile: userProfileData,
+            userProfile: userProfile.data,
           });
         }
 
