@@ -1,26 +1,19 @@
-FROM circleci/node:latest-browsers as builder
+FROM node:14
 
-WORKDIR /usr/src/app/
-USER root
-COPY package.json ./
-RUN yarn
+# Create app directory
+WORKDIR /usr/src/app
 
-COPY ./ ./
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY package*.json ./
 
-RUN npm run test:all
+RUN npm install
+# If you are building your code for production
+#RUN npm ci --only=production
 
-RUN npm run fetch:blocks
-
-RUN npm run build
-
-
-FROM nginx
-
-WORKDIR /usr/share/nginx/html/
-
-COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
-
-COPY --from=builder /usr/src/app/dist  /usr/share/nginx/html/
+# Bundle app source
+COPY dist/* ./
 
 EXPOSE 8000
 CMD ["cross-env-shell", "UI_ORIGIN_URL=http://localhost:8080", "API_URL=http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8080", "UMI_ENV=prod", "umi"]
