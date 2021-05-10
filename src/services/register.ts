@@ -1,4 +1,4 @@
-import request from "@/utils/request";
+import {requestWithoutAuthorization} from "@/utils/request";
 import {REGISTER} from "@/services/resourceUrl";
 
 export type RegisterParamsType = {
@@ -9,7 +9,7 @@ export type RegisterParamsType = {
 
 export async function registerAccount(params: RegisterParamsType) {
   const paramString = JSON.stringify(params);
-  return request(REGISTER,
+  return requestWithoutAuthorization(REGISTER,
     {
       method: 'POST',
       data: paramString,

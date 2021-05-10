@@ -26,17 +26,41 @@ export function getAuthority(str?: string): string | string[] {
 export function setAuthority(authority: string | string[]): void {
   const proAuthority = typeof authority === 'string' ? [authority] : authority;
   localStorage.setItem('study-mama-authority', JSON.stringify(proAuthority));
-  // auto reload
   reloadAuthorized();
 }
 
 export function setToken(token: string): void {
   localStorage.setItem('sm-token', token);
-  // auto reload
   reloadAuthorized();
 }
 
 export function getToken(): string {
   const smToken = localStorage.getItem('sm-token');
   return smToken || "none";
+}
+
+export function setUserId(username: string): void {
+  localStorage.setItem('sm-user-id', username);
+  reloadAuthorized();
+}
+
+export function getUserId(): string | null {
+  const smUserId = localStorage.getItem('sm-user-id');
+  return smUserId;
+}
+
+export function setUserProfile(user: string): void {
+  localStorage.setItem('sm-user-profile', user);
+  reloadAuthorized();
+}
+
+export function getUserProfile(): string | null {
+  const smUserProfile = localStorage.getItem('sm-user-profile');
+  return smUserProfile;
+}
+
+export function resetCurrent(): void {
+  localStorage.removeItem('sm-user-profile');
+  localStorage.removeItem('sm-user-id');
+  localStorage.removeItem('sm-token');
 }

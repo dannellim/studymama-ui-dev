@@ -122,7 +122,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
       {...props}
       {...settings}
       onCollapse={handleMenuCollapse}
-      onMenuHeaderClick={() => history.push('/')}
+      onMenuHeaderClick={() => history.push('/welcome')}
       menuItemRender={(menuItemProps, defaultDom) => {
         if (
           menuItemProps.isUrl ||

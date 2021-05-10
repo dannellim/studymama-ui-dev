@@ -4,10 +4,9 @@ import {GET_CATEGORIES, SEARCH_POST_BY_CATEGORY, SEARCH_POST_BY_KEYWORD} from "@
 import {GET_POST} from "@/services/resourceUrl";
 import {PUT_POST} from "@/services/resourceUrl";
 import {Post} from "@/models/post";
-import {Word} from "react-wordcloud";
 
 export type PostParamsType = {
-  categoryList?: Word[],
+  categoryList?: string[],
   category?: string,
   key?: string,
   keyword?: string,

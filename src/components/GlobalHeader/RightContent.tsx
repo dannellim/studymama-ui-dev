@@ -11,14 +11,11 @@ export type GlobalHeaderRightProps = {
 } & Partial<ConnectProps> &
   Partial<ProSettings>;
 
-const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = (props) => {
-  let className = `${styles.right} `;
+const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = () => {
   return (
     <>
-      <div className={className}>
           <Avatar />
           <SelectLang className={styles.action} />
-        </div>
     </>
     );
   };

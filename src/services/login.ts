@@ -1,4 +1,4 @@
-import request, {authorizedRequest} from '@/utils/request';
+import request, {requestWithoutAuthorization} from '@/utils/request';
 import {AUTHENTICATE, REFRESH_TOKEN} from "@/services/resourceUrl";
 
 export type LoginParamsType = {
@@ -7,7 +7,7 @@ export type LoginParamsType = {
 };
 
 export async function accountLogin(params: LoginParamsType) {
-  return request(AUTHENTICATE,
+  return requestWithoutAuthorization(AUTHENTICATE,
     {
       method: 'POST',
       data: JSON.stringify(params),
@@ -22,7 +22,7 @@ export async function accountLogin(params: LoginParamsType) {
 }
 
 export async function refreshLogin(params: LoginParamsType) {
-  return authorizedRequest(REFRESH_TOKEN,
+  return request(REFRESH_TOKEN,
     {
       method: 'POST',
       data: JSON.stringify(params),

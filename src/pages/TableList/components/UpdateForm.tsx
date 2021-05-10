@@ -9,8 +9,7 @@ import {
   ProFormDateTimePicker,
 } from '@ant-design/pro-form';
 import { useIntl, FormattedMessage } from 'umi';
-
-import type { Post } from '../data.d';
+import {Post} from "@/models/post";
 
 export type FormValueType = {
   target?: string;

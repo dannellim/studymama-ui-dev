@@ -41,18 +41,30 @@ const errorHandler = (error: { response: Response }): Response => {
   return response;
 };
 
-function createRequestWithAuthorization() {
+function createRequestWithoutAuthorization() {
   const myRequest = extend({
     errorHandler, // default error handling
     getResponse: true,
-    headers: // Does the default request bring cookie
-      {
-        'Access-Control-Allow-Origin': JSON.stringify(getStudyMamaUi()),
-        Authorization: 'Bearer ' + getToken(),
-      }
+    headers: {
+      'Access-Control-Allow-Origin': JSON.stringify(getStudyMamaUi()),
+      'Content-Type': 'application/json',
+    },
   });
   return myRequest;
 }
-const request =  createRequestWithAuthorization();
-export const authorizedRequest = createRequestWithAuthorization();
+function createRequest() {
+  const myRequest = extend({
+    errorHandler, // default error handling
+    getResponse: true,
+    headers: {
+      'Access-Control-Allow-Origin': JSON.stringify(getStudyMamaUi()),
+      Authorization: `Bearer ${getToken()}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  return myRequest;
+}
+
+const request =  createRequest();
+export const requestWithoutAuthorization = createRequestWithoutAuthorization();
 export default request;

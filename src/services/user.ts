@@ -1,28 +1,46 @@
 import request from '@/utils/request';
-import {getApiBaseUrl, getStudyMamaUi} from "@/utils/utils";
-import {GET_PROFILE} from "@/services/resourceUrl";
-import {LoginParamsType} from "@/services/login";
-import {getToken} from "@/utils/authority";
+import {GET_PROFILE, PUT_PROFILE} from "@/services/resourceUrl";
+import {getUserId} from "@/utils/authority";
+import {UserProfile} from "@/models/user";
 
-const BASE_URL = getApiBaseUrl();
+export type UserParamType = {
+  username?: string;
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+  contact?: string;
+  address?: string;
+  role?: string;
+};
+
 export async function query(): Promise<any> {
-  return request(`${BASE_URL}/getProfile`);
+  return queryCurrent(getUserId() || '');
 }
 
-export async function queryCurrent(params: LoginParamsType): Promise<any> {
+export async function queryCurrent(username: string): Promise<any> {
   return request(GET_PROFILE,
     {
       method: 'POST',
+      data: { username },
+    }).then((response) => {
+    return response;
+  }).catch((error) => {
+    return error;
+  });
+}
+
+export async function updateProfile(params: UserProfile): Promise<any> {
+  return request(PUT_PROFILE,
+    {
+      method: 'POST',
       data: {
-        'username': params.username,
-        'password': '',
-        'role': '',
+        firstName: params.firstName,
+        lastName: params.lastName,
+        username: params.username,
+        contact: params.contact,
+        password: params.password,
+        address: params.address,
       },
-      headers: {
-        'Access-Control-Allow-Origin': JSON.stringify(getStudyMamaUi()),
-        Authorization: 'Bearer ' + getToken(),
-        'Content-Type': 'application/json',
-      }
     }).then((response) => {
     return response;
   }).catch((error) => {
@@ -31,5 +49,5 @@ export async function queryCurrent(params: LoginParamsType): Promise<any> {
 }
 
 export async function queryNotices(): Promise<any> {
-  return request(`${BASE_URL}/api/notices`);
+  return request(`/api/notices`);
 }
