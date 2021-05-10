@@ -21,6 +21,7 @@
     "precommit": "lint-staged",
     "prettier": "prettier -c --write \"src/**/*\"",
     "start": "cross-env-shell CONTENT_APP_URL=http://www.facebook.com STUDYMAMA_UI=http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8000 API_URL=http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8080 MOCK=none UMI_ENV=dev umi dev",
+    "start:dev-local-ui": "cross-env-shell CONTENT_APP_URL=http://www.facebook.com STUDYMAMA_UI=http://localhost:8000 API_URL=http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8080 MOCK=none UMI_ENV=dev umi dev",
     "start:dev": "cross-env-shell CONTENT_APP_URL=welcome STUDYMAMA_UI=http://localhost:8000 API_URL=http://localhost:8080 REACT_APP_ENV=dev MOCK=none UMI_ENV=dev umi dev",
     "start:no-mock": "cross-env MOCK=none UMI_ENV=dev umi dev",
     "start:no-ui": "cross-env UMI_UI=none UMI_ENV=dev umi dev",

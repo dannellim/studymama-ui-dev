@@ -8,14 +8,18 @@
         component: '../layouts/UserLayout',
         routes: [
           {
-            name: 'login',
+            name: 'Login / Register',
             path: '/user/login',
             component: './User/login',
           },{
-            name: 'register',
+            name: 'Login / Register',
             path: '/user/login',
             component: './User/login',
-          },
+          },{
+            name: 'Profile ',
+            path: '/user/profile',
+            component: './User/profile',
+          }
         ],
       },
       {

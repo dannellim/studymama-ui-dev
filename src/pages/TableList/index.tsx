@@ -9,8 +9,8 @@ import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import UpdateForm, {FormValueType} from './components/UpdateForm';
-import type {Post} from './data.d';
 import {allPost, updatePost, addPost, deletePost} from './service';
+import {Post} from "@/models/post";
 
 const handleAdd = async (fields: Post) => {
   const hide = message.loading('Adding..');

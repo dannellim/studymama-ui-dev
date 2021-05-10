@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
 import {Card, Alert, Image, Typography, Row, Col, message} from 'antd';
-import {useIntl, connect, FormattedMessage} from 'umi';
+import {useIntl, FormattedMessage} from 'umi';
+import {connect} from 'umi';
+import type { Dispatch } from 'umi';
 import styles from './Welcome.less';
 import train from '../assets/train-hand.svg';
 import fastFood from '../assets/fast-food.svg';
@@ -9,9 +11,9 @@ import school from '../assets/school.svg';
 import ReactWordcloud, {Word} from 'react-wordcloud';
 import { Input } from 'antd';
 import type { PostParamsType } from '@/services/post';
-import type { ConnectState } from '@/models/connect';
-import type { Dispatch } from 'umi';
 import {getCategoryListSvc} from "@/services/post";
+import type {ConnectState} from "@/models/connect";
+import type {UserModelState} from "@/models/connect";
 
 const { Search } = Input;
 
@@ -25,7 +27,8 @@ const CodePreview: React.FC = ({ children }) => (
 
 export type SearchProps = {
   dispatch: Dispatch;
-  welcomeUser : PostParamsType;
+  welcomeUser? : UserModelState;
+  postParameters? : PostParamsType;
   submitting?: boolean;
 };
 
@@ -42,9 +45,9 @@ const SearchCategoryCard: React.FC<{
     </Card>
 );
 
-const WelcomePage: React.FC<SearchProps> = (props) => {
-  const { welcomeUser = {}, submitting } = props;
-  const { keyword, category, categoryList = getCategoryList() } = welcomeUser;
+const Welcome: React.FC<SearchProps> = (props) => {
+  const { postParameters, submitting } = props;
+  const { key, keyword, category, categoryList, currentPage, pageSize = getCategoryList() } = postParameters;
   const {} = useState({});
   const intl = useIntl();
   console.log(submitting);
@@ -180,16 +183,7 @@ const WelcomePage: React.FC<SearchProps> = (props) => {
   );
 };
 
-export default connect(({ keyword, category, post, currentPage, pageSize, loading }: ConnectState) =>
-  ({
-    submitting: loading.effects['post/searchByCategory'] || loading.effects['post/searchByKeyword'] || loading.effects['post/category'],
-    welcomeUser: {
-         keyword: keyword,
-         category: category,
-         currentPage: currentPage,
-         pageSize: pageSize,
-         post: post,
-    }
-  })
-)(WelcomePage);
-
+export default connect(({  postParam, loading }: ConnectState) => ({
+  submitting: (loading.effects['post/searchByCategory'] || loading.effects['post/searchByKeyword'] || loading.effects['post/category']),
+  postParameters: postParam || {},
+}))(Welcome);

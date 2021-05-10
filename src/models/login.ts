@@ -3,17 +3,17 @@ import type { Reducer, Effect } from 'umi';
 import { history } from 'umi';
 
 import { accountLogin } from '@/services/login';
-import { setToken} from '@/utils/authority';
-import { getContentAppUrl, getPageQuery } from '@/utils/utils';
+import { resetCurrent, setUserProfile, setToken, getUserId, setUserId } from '@/utils/authority';
+import {getContentAppUrl, getPageQuery} from '@/utils/utils';
 import { message } from 'antd';
 import {queryCurrent} from "@/services/user";
-import {CurrentUser, UserModelState} from "@/models/user";
+import {UserProfile} from "@/models/user";
 
 export type StateType = {
   status?: 'ok' | 'error';
   type?: string;
   token?: string;
-  currentUser?: CurrentUser;
+  currentUser?: UserProfile;
   currentAuthority?: 'user' | 'guest' | 'admin';
 };
 
@@ -26,7 +26,7 @@ export type LoginModelType = {
   };
   reducers: {
     changeLoginStatus: Reducer<StateType>;
-    updateUserProfile: Reducer<UserModelState>;
+    setUserProfile: Reducer<StateType>;
   };
 };
 
@@ -39,6 +39,7 @@ const Model: LoginModelType = {
 
   effects: {
     *login({ payload }, { call, put }) {
+      resetCurrent();
       const {data, response} = yield call(accountLogin, payload);
       // Login successfully
       if (response === undefined || !response.ok) {
@@ -47,9 +48,10 @@ const Model: LoginModelType = {
         yield put({
           type: 'changeLoginStatus',
           payload: data,
+          username: payload.username,
         });
         message.success('Login Successful!');
-        const userProfile = yield call(queryCurrent, payload);
+        const userProfile = yield call(queryCurrent, getUserId());
         if (userProfile.response === undefined || !userProfile.response.ok) {
           message.error('Unable to load user profile...');
         } else {
@@ -63,6 +65,7 @@ const Model: LoginModelType = {
       }
     },
     logout() {
+      resetCurrent();
       const { redirect } = getPageQuery();
       if (window.location.pathname !== '/user/login' && !redirect) {
         history.replace({
@@ -76,8 +79,9 @@ const Model: LoginModelType = {
   },
 
   reducers: {
-    changeLoginStatus(state, { payload }) {
+    changeLoginStatus(state, { payload, username }) {
       setToken(payload.token);
+      setUserId(username);
       return {
         ...state,
         status: ( payload.token )?"ok":"error",
@@ -85,18 +89,11 @@ const Model: LoginModelType = {
         token: payload.token,
       };
     },
-    updateUserProfile(state, { userProfile }) {
+    setUserProfile(state, { userProfile }) {
+      setUserProfile(JSON.stringify(userProfile));
       return {
         ...state,
-        currentUser: {
-          name: userProfile.firstName + ' ' + userProfile.lastName,
-          userid: userProfile.id,
-          tags: [
-            {'key': 'contact', 'label': userProfile.contact},
-            {'key': 'address', 'label': userProfile.address},
-            {'key': 'lastModifiedDate', 'label': userProfile.lastModifiedDate},
-          ],
-        },
+        currentUser: userProfile,
       };
     },
   },

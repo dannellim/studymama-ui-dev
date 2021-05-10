@@ -4,12 +4,12 @@ import React from 'react';
 import type { ConnectProps } from 'umi';
 import { history, connect } from 'umi';
 import type { ConnectState } from '@/models/connect';
-import type { CurrentUser } from '@/models/user';
+import type { UserProfile } from '@/models/user';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 
 export type GlobalHeaderRightProps = {
-  currentUser?: CurrentUser;
+  currentUser?: UserProfile;
   menu?: boolean;
 } & Partial<ConnectProps>;
 
@@ -38,8 +38,9 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
   render(): React.ReactNode {
     const {
       currentUser = {
-        avatar: '',
-        name: '',
+        id: '',
+        firstname: '',
+        lastname: '',
       },
       menu,
     } = this.props;
@@ -65,11 +66,14 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
         </Menu.Item>
       </Menu>
     );
-    return currentUser && currentUser.name ? (
+    return currentUser && currentUser.id ? (
       <HeaderDropdown overlay={menuHeaderDropdown}>
         <span className={`${styles.action} ${styles.account}`}>
-          <span className={`${styles.name} anticon`}>{currentUser.name}</span>
-          <span className={`${styles.name} anticon`}>{currentUser.userid}</span>
+          <span className={`${styles.name} anticon`}>{currentUser.firstname}</span>
+          <span className={`${styles.name} anticon`}>{currentUser.lastname}</span>
+        </span>
+        <span className={`${styles.action} ${styles.account}`}>
+          <span className={`${styles.name} anticon`}>({currentUser.id})</span>
         </span>
       </HeaderDropdown>
     ) : (

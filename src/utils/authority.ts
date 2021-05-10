@@ -40,3 +40,28 @@ export function getToken(): string {
   const smToken = localStorage.getItem('sm-token');
   return smToken || "none";
 }
+
+export function setUserId(username: string): void {
+  localStorage.setItem('sm-user-id', username);
+  // auto reload
+  reloadAuthorized();
+}
+
+export function getUserId(): string | null {
+  const smUserId = localStorage.getItem('sm-user-id');
+  return smUserId;
+}
+
+export function setUserProfile(user: string): void {
+  localStorage.setItem('sm-user-profile', user);
+  reloadAuthorized();
+}
+
+export function getUserProfile(): string | null {
+  const smUserProfile = localStorage.getItem('sm-user-profile');
+  return smUserProfile;
+}
+
+export function resetCurrent(): void {
+  localStorage.clear();
+}

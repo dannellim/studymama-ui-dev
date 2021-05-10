@@ -2,7 +2,7 @@ import type { MenuDataItem, Settings as ProSettings } from '@ant-design/pro-layo
 import { GlobalModelState } from './global';
 import { UserModelState } from './user';
 import type { StateType } from './login';
-import {Post, PostModelType} from "@/models/post";
+import {PostParamsType} from "@/services/post";
 
 export { GlobalModelState, UserModelState };
 
@@ -20,15 +20,11 @@ export type Loading = {
 
 export type ConnectState = {
   global: GlobalModelState;
+  user: UserModelState;
   loading: Loading;
   settings: ProSettings;
-  user: UserModelState;
   login: StateType;
-  keyword: string,
-  category: string,
-  currentPage: number,
-  pageSize: number,
-  post: Post,
+  postParam: PostParamsType;
 };
 
 export type Route = {
