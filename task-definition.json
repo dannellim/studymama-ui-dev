@@ -1,0 +1,85 @@
+{
+    "ipcMode": null,
+    "executionRoleArn": "arn:aws:iam::336218866683:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "dnsSearchDomains": null,
+            "environmentFiles": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/studymama-react-ui-service-lb",
+                    "awslogs-region": "ap-southeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "entryPoint": [
+                "yarn",
+                "start"
+            ],
+            "portMappings": [
+                {
+                    "containerPort": "8000",
+                    "protocol": "tcp"
+                }
+            ],
+            "command": null,
+            "linuxParameters": null,
+            "cpu": 512,
+            "environment": null,
+            "resourceRequirements": null,
+            "ulimits": null,
+            "dnsServers": null,
+            "mountPoints": null,
+            "workingDirectory": null,
+            "secrets": null,
+            "dockerSecurityOptions": null,
+            "memoryReservation": 1024,
+            "volumesFrom": null,
+            "stopTimeout": null,
+            "image": "336218866683.dkr.ecr.ap-southeast-1.amazonaws.com/studymama-react-ui-repo:11c0aa803cf1a1e898c601d72f5ce7665aa666ae",
+            "startTimeout": null,
+            "firelensConfiguration": null,
+            "dependsOn": null,
+            "disableNetworking": null,
+            "interactive": null,
+            "healthCheck": {
+                "retries": 10,
+                "command": [
+                    "CMD-SHELL",
+                    "curl --fail http://localhost:8000/ || exit 1"
+                ],
+                "timeout": 5,
+                "interval": 30,
+                "startPeriod": 300
+            },
+            "essential": true,
+            "links": null,
+            "hostname": null,
+            "extraHosts": null,
+            "pseudoTerminal": null,
+            "user": null,
+            "readonlyRootFilesystem": null,
+            "dockerLabels": null,
+            "systemControls": null,
+            "privileged": null,
+            "name": "studymama-react-ui",
+            "repositoryCredentials": {
+                "credentialsParameter": ""
+            }
+        }
+    ],
+    "memory": "2048",
+    "taskRoleArn": "arn:aws:iam::336218866683:role/ecsTaskExecutionRole",
+    "family": "studymama-react-ui-task-definition",
+    "pidMode": null,
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "networkMode": "awsvpc",
+    "cpu": "512",
+    "inferenceAccelerators": null,
+    "proxyConfiguration": null,
+    "volumes": [],
+    "tags": []
+}
