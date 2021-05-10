@@ -13,7 +13,7 @@ RUN npm install
 #RUN npm ci --only=production
 
 # Bundle app source
-COPY dist/* ./
+COPY ./ ./
 
 EXPOSE 8000
 CMD ["cross-env-shell", "UI_ORIGIN_URL=http://localhost:8080", "API_URL=http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8080", "UMI_ENV=prod", "umi"]
