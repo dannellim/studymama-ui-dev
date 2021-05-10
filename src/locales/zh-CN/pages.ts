@@ -20,6 +20,7 @@ export default {
   'pages.login.submit': '提交',
   'pages.login.loginWith': '其他登录方式 :',
   'pages.login.registerAccount': '注册账户',
+  'pages.profile.login.tab': '编辑个人资料',
   'pages.welcome.search.school': '学校和补习中心',
   'pages.welcome.search.transport': '巴士与火车',
   'pages.welcome.search.food': '美食广场和餐厅',

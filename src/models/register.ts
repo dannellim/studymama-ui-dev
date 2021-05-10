@@ -1,6 +1,6 @@
 import type { Reducer, Effect } from 'umi';
 import { registerAccount } from '@/services/register';
-import { setAuthority } from '@/utils/authority';
+import {resetCurrent, setAuthority} from '@/utils/authority';
 import { message } from 'antd';
 
 export type RegisterStateType = {
@@ -29,6 +29,7 @@ const RegisterModel: RegisterModelType = {
 
   effects: {
     *register({ payload }, { call, put }) {
+      resetCurrent();
       const { data, response } = yield call(registerAccount, payload);
       if (response && response.ok) {
         message.success(

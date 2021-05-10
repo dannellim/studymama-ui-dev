@@ -3,7 +3,6 @@ import { AutoComplete, Input } from 'antd';
 import useMergedState from 'rc-util/es/hooks/useMergedState';
 import type { AutoCompleteProps } from 'antd/es/auto-complete';
 import React, { useRef } from 'react';
-
 import classNames from 'classnames';
 import styles from './index.less';
 
