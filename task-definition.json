@@ -16,14 +16,20 @@
             "entryPoint": null,
             "portMappings": [
                 {
-                    "containerPort": "8000",
-                    "protocol": "tcp"
+                    "hostPort": 8000,
+                    "protocol": "tcp",
+                    "containerPort": 8000
                 }
             ],
             "command": null,
             "linuxParameters": null,
             "cpu": 512,
-            "environment": null,
+            "environment": [
+                {
+                    "name": "API_URL",
+                    "value": "http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8080"
+                }
+            ],
             "resourceRequirements": null,
             "ulimits": null,
             "dnsServers": null,
@@ -34,7 +40,7 @@
             "memoryReservation": 1024,
             "volumesFrom": null,
             "stopTimeout": null,
-            "image": "336218866683.dkr.ecr.ap-southeast-1.amazonaws.com/studymama-react-ui-repo:11c0aa803cf1a1e898c601d72f5ce7665aa666ae",
+            "image": "336218866683.dkr.ecr.ap-southeast-1.amazonaws.com/studymama-react-ui-repo:3926b17ba1e39369915b78b54b2daa5f5d290cc6",
             "startTimeout": null,
             "firelensConfiguration": null,
             "dependsOn": null,
