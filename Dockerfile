@@ -1,4 +1,4 @@
-ROM circleci/node:latest-browsers as builder
+FROM circleci/node:latest-browsers as builder
 
 WORKDIR /usr/src/app/
 USER root
