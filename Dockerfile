@@ -1,19 +1,19 @@
-FROM node:14
+FROM node:13.12.0-alpine
 
-# Create app directory
-WORKDIR /usr/src/app
+# set working directory
+WORKDIR /app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package*.json ./
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
 
-#RUN npm install
-# If you are building your code for production
-RUN npm ci --only=production
+# install app dependencies
+COPY package.json ./
+COPY package-lock.json ./
+RUN npm install --silent
+RUN npm install react-scripts@3.4.1 -g --silent
 
-# Bundle app source
-COPY dist/* ./
+# add app
+COPY . ./
 
 EXPOSE 8000
 CMD ["cross-env-shell", "UI_ORIGIN_URL=http://localhost:8080", "API_URL=http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8080", "UMI_ENV=prod", "umi"]
