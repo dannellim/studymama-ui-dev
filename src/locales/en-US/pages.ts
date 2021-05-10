@@ -20,6 +20,7 @@ export default {
   'pages.login.submit': 'Submit',
   'pages.login.loginWith': 'Login with :',
   'pages.login.registerAccount': 'Register Account',
+  'pages.profile.login.tab': 'Edit Profile',
   'pages.welcome.search.school': 'Schools & Tuition Centers',
   'pages.welcome.search.transport': 'Buses & Trains',
   'pages.welcome.search.food': 'Food Courts & Restaurants',

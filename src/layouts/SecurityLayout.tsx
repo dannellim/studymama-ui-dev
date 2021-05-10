@@ -5,7 +5,7 @@ import { Redirect, connect } from 'umi';
 import { stringify } from 'querystring';
 import type { ConnectState } from '@/models/connect';
 import type { UserProfile } from '@/models/user';
-import {getAuthority} from "@/utils/authority";
+import {getAuthority, getToken} from "@/utils/authority";
 
 type SecurityLayoutProps = {
   loading?: boolean;
@@ -35,13 +35,12 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
 
   render() {
     const { isReady } = this.state;
-    const { children, loading, currentUser } = this.props;
+    const { children, loading } = this.props;
     // You can replace it to your authentication rule (such as check token exists)
-    const isLogin = getAuthority("token");
+    const isLogin = getAuthority("token") && getToken() !== "none";
     const queryString = stringify({
       redirect: window.location.href,
     });
-    console.log(currentUser);
     if ((!isLogin && loading) || !isReady) {
       return <PageLoading />;
     }

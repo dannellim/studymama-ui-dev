@@ -11,8 +11,9 @@ export type UserProfile = {
   lastModifiedDate?: string;
   id?: number,
   username?:string;
-  firstname?:string;
-  lastname?: string;
+  password?:string;
+  firstName?:string;
+  lastName?: string;
   contact?: string;
   address?: string;
   unreadCount?: number;
@@ -51,14 +52,14 @@ const UserModel: UserModelType = {
 
   effects: {
     *saveProfileData({payload}, { call, put }) {
-      const response = yield call(updateProfile, payload);
+      const {data, response} = yield call(updateProfile, payload);
       if (response === undefined || !response.ok) {
         message.error('Unable to update profile.');
       } else {
         message.success('Profile updated successfully!')
         yield put({
           type: 'changeCurrentUser',
-          payload: response,
+          payload: data,
         });
         window.location.href = '/welcome';
       }
@@ -75,7 +76,7 @@ const UserModel: UserModelType = {
         const response = yield call(queryCurrent, getUserId());
         yield put({
           type: 'changeCurrentUser',
-          payload: response,
+          payload: response.data,
         });
       } else {
         yield put({
@@ -88,10 +89,12 @@ const UserModel: UserModelType = {
 
   reducers: {
     changeCurrentUser(state, action) {
-      setUserProfile(JSON.stringify(action.payload || {}));
+      const userProfile = action.payload || {};
+      userProfile.username = getUserId();
+      setUserProfile(JSON.stringify(userProfile));
       return {
         ...state,
-        currentUser: action.payload,
+        currentUser: userProfile,
       };
     },
     saveCurrentUser(state, action) {

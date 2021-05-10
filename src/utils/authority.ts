@@ -26,13 +26,11 @@ export function getAuthority(str?: string): string | string[] {
 export function setAuthority(authority: string | string[]): void {
   const proAuthority = typeof authority === 'string' ? [authority] : authority;
   localStorage.setItem('study-mama-authority', JSON.stringify(proAuthority));
-  // auto reload
   reloadAuthorized();
 }
 
 export function setToken(token: string): void {
   localStorage.setItem('sm-token', token);
-  // auto reload
   reloadAuthorized();
 }
 
@@ -43,7 +41,6 @@ export function getToken(): string {
 
 export function setUserId(username: string): void {
   localStorage.setItem('sm-user-id', username);
-  // auto reload
   reloadAuthorized();
 }
 
@@ -63,5 +60,7 @@ export function getUserProfile(): string | null {
 }
 
 export function resetCurrent(): void {
-  localStorage.clear();
+  localStorage.removeItem('sm-user-profile');
+  localStorage.removeItem('sm-user-id');
+  localStorage.removeItem('sm-token');
 }

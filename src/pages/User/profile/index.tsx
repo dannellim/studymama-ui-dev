@@ -1,17 +1,18 @@
 import {
   LockOutlined,
+  MobileOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { Alert, Tabs, } from 'antd';
 import React, { useState } from 'react';
-import ProForm, { ProFormText } from '@ant-design/pro-form';
+import ProForm, {ProFormText, ProFormTextArea} from '@ant-design/pro-form';
 import {connect, useIntl, FormattedMessage} from 'umi';
 import type { Dispatch } from 'umi';
-import type { LoginParamsType } from '@/services/login';
 import type { ConnectState } from '@/models/connect';
 
 import styles from './index.less';
 import {UserStateType} from "@/models/user";
+import {UserParamType} from "@/services/user";
 
 export type UserProfileProps = {
   dispatch: Dispatch;
@@ -32,16 +33,16 @@ const UserMessage: React.FC<{
   />
 );
 
-const Login: React.FC<UserProfileProps> = (props) => {
+const Profile: React.FC<UserProfileProps> = (props) => {
   const { userProfile = {}, submitting } = props;
-  const [actionTab, setActionTab] = useState<string>('update');
+  const [actionTab, setActionTab] = useState<string>('editprofile');
 
   const intl = useIntl();
 
-  const handleSubmit = (values: LoginParamsType) => {
+  const handleSubmit = (values: UserParamType) => {
     const { dispatch } = props;
     dispatch({
-      type: 'user/save',
+      type: 'user/saveProfileData',
       payload: { ...values, actionTab },
     });
   };
@@ -49,9 +50,7 @@ const Login: React.FC<UserProfileProps> = (props) => {
     <div className={styles.main}>
       <ProForm
         name="userProfile"
-        initialValues={{
-          autoLogin: true,
-        }}
+        initialValues={ userProfile }
         submitter={{
           render: (_, dom) => dom.pop(),
           submitButtonProps: {
@@ -63,36 +62,29 @@ const Login: React.FC<UserProfileProps> = (props) => {
           },
         }}
         onFinish={(values) => {
-          handleSubmit(values as LoginParamType);
+          handleSubmit(values as UserParamType);
           return Promise.resolve();
         }}
       >
         <Tabs activeKey={actionTab} onChange={setActionTab}>
           <Tabs.TabPane
-            key="login"
+            key="editprofile"
             tab={intl.formatMessage({
-              id: 'pages.login.login.tab',
-              defaultMessage: 'Update Profile',
+              id: 'pages.profile.login.tab',
+              defaultMessage: 'User Profile',
             })}
           />
         </Tabs>
-        {status === 'error' && !submitting && (
-          <UserMessage
-            content={intl.formatMessage({
-              id: 'pages.login.login.errorMessage',
-              defaultMessage: 'Incorrect username/password',
-            })}
-          />
-        )}
           <>
             <ProFormText
-              name="userProfile.username"
+              name="username"
+              disabled={true}
               fieldProps={{
                 size: 'large',
                 prefix: <UserOutlined className={styles.prefixIcon} />,
               }}
               placeholder={intl.formatMessage({
-                id: 'pages.login.username.placeholder',
+                id: 'pages.profile.username.placeholder',
                 defaultMessage: 'User Name',
               })}
               rules={[
@@ -100,7 +92,7 @@ const Login: React.FC<UserProfileProps> = (props) => {
                   required: true,
                   message: (
                     <FormattedMessage
-                      id="pages.login.username.required"
+                      id="pages.profile.username.required"
                       defaultMessage="Please input your username!"
                     />
                   ),
@@ -108,13 +100,13 @@ const Login: React.FC<UserProfileProps> = (props) => {
               ]}
             />
             <ProFormText.Password
-              name="userProfile.password"
+              name="password"
               fieldProps={{
                 size: 'large',
                 prefix: <LockOutlined className={styles.prefixIcon} />,
               }}
               placeholder={intl.formatMessage({
-                id: 'pages.login.password.placeholder',
+                id: 'pages.profile.password.placeholder',
                 defaultMessage: 'Password',
               })}
               rules={[
@@ -122,7 +114,7 @@ const Login: React.FC<UserProfileProps> = (props) => {
                   required: true,
                   message: (
                     <FormattedMessage
-                      id="pages.login.password.required"
+                      id="pages.profile.password.required"
                       defaultMessage="Please input your password!"
                     />
                   ),
@@ -131,13 +123,13 @@ const Login: React.FC<UserProfileProps> = (props) => {
             />
 
             <ProFormText
-              name="userProfile.firstname"
+              name="firstName"
               fieldProps={{
                 size: 'large',
                 prefix: <UserOutlined className={styles.prefixIcon} />,
               }}
               placeholder={intl.formatMessage({
-                id: 'pages.login.firstname.placeholder',
+                id: 'pages.profile.firstname.placeholder',
                 defaultMessage: 'First Name',
               })}
               rules={[
@@ -145,7 +137,7 @@ const Login: React.FC<UserProfileProps> = (props) => {
                   required: true,
                   message: (
                     <FormattedMessage
-                      id="pages.login.firstname.required"
+                      id="pages.profile.firstname.required"
                       defaultMessage="Please input your first name!"
                     />
                   ),
@@ -153,13 +145,13 @@ const Login: React.FC<UserProfileProps> = (props) => {
               ]}
             />
             <ProFormText
-            name="userProfile.lastname"
+            name="lastName"
             fieldProps={{
               size: 'large',
               prefix: <UserOutlined className={styles.prefixIcon} />,
             }}
             placeholder={intl.formatMessage({
-              id: 'pages.login.lastname.placeholder',
+              id: 'pages.profile.lastname.placeholder',
               defaultMessage: 'Last Name',
             })}
             rules={[
@@ -167,7 +159,7 @@ const Login: React.FC<UserProfileProps> = (props) => {
                 required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.login.lastname.required"
+                    id="pages.profile.lastname.required"
                     defaultMessage="Please input your last name!"
                   />
                 ),
@@ -175,13 +167,13 @@ const Login: React.FC<UserProfileProps> = (props) => {
             ]}
           />
             <ProFormText
-              name="userProfile.contact"
+              name="contact"
               fieldProps={{
                 size: 'large',
-                prefix: <UserOutlined className={styles.prefixIcon} />,
+                prefix: <MobileOutlined className={styles.prefixIcon} />,
               }}
               placeholder={intl.formatMessage({
-                id: 'pages.login.contact.placeholder',
+                id: 'pages.profile.contact.placeholder',
                 defaultMessage: 'Contact Number',
               })}
               rules={[
@@ -190,21 +182,20 @@ const Login: React.FC<UserProfileProps> = (props) => {
                   pattern: /^[3,6,8,9]{1}[0-9]{7}$/,
                   message: (
                     <FormattedMessage
-                      id="pages.login.contact.required"
+                      id="pages.profile.contact.required"
                       defaultMessage="Please input your contact!"
                     />
                   ),
                 },
               ]}
             />
-            <ProFormText
-            name="userProfile.address"
+            <ProFormTextArea
+            name="address"
             fieldProps={{
               size: 'large',
-              prefix: <UserOutlined className={styles.prefixIcon} />,
             }}
             placeholder={intl.formatMessage({
-              id: 'pages.login.contact.placeholder',
+              id: 'pages.profile.contact.placeholder',
               defaultMessage: 'Address',
             })}
             rules={[
@@ -212,7 +203,7 @@ const Login: React.FC<UserProfileProps> = (props) => {
                 required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.login.contact.required"
+                    id="pages.profile.contact.required"
                     defaultMessage="Please input your address!"
                   />
                 ),
@@ -225,7 +216,7 @@ const Login: React.FC<UserProfileProps> = (props) => {
   );
 };
 
-export default connect(({ login, loading }: ConnectState) => ({
-  userLogin: login,
-  submitting: loading.effects['login/login'],
-}))(Login);
+export default connect(({ user, loading }: ConnectState) => ({
+  userProfile: user.currentUser,
+  submitting: loading.effects['user/fetchCurrent'],
+}))(Profile);

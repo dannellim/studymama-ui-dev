@@ -39,9 +39,8 @@ const Model: LoginModelType = {
 
   effects: {
     *login({ payload }, { call, put }) {
-      resetCurrent();
       const {data, response} = yield call(accountLogin, payload);
-      // Login successfully
+      resetCurrent();
       if (response === undefined || !response.ok) {
         message.error('Login Failed! \n Please check username / password.');
       } else {
@@ -55,18 +54,18 @@ const Model: LoginModelType = {
         if (userProfile.response === undefined || !userProfile.response.ok) {
           message.error('Unable to load user profile...');
         } else {
+          userProfile.data.username = getUserId();
           yield put({
-            type: 'updateUserProfile',
+            type: 'setUserProfile',
             userProfile: userProfile.data,
           });
         }
-
-        window.location.href = '/' + getContentAppUrl();
+        window.location.href = `/${getContentAppUrl()||'welcome'}`;
       }
     },
     logout() {
-      resetCurrent();
       const { redirect } = getPageQuery();
+      resetCurrent();
       if (window.location.pathname !== '/user/login' && !redirect) {
         history.replace({
           pathname: '/user/login',

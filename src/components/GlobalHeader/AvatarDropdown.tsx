@@ -1,4 +1,4 @@
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import {LogoutOutlined, ProfileOutlined, UserOutlined} from '@ant-design/icons';
 import { Menu, Spin } from 'antd';
 import React from 'react';
 import type { ConnectProps } from 'umi';
@@ -21,59 +21,49 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
     domEvent: React.MouseEvent<HTMLElement>;
   }) => {
     const { key } = event;
-
-    if (key === 'logout') {
-      const { dispatch } = this.props;
-      if (dispatch) {
+    const { dispatch } = this.props;
+    if (dispatch && key === 'logout') {
         dispatch({
           type: 'login/logout',
         });
-      }
-
-      return;
+    } else if (dispatch && key === 'editprofile') {
+        dispatch({
+          type: 'user/fetchCurrent',
+        });
     }
-    history.push(`/account/${key}`);
+    history.push(`/user/${key}`);
   };
 
   render(): React.ReactNode {
     const {
       currentUser = {
         id: '',
-        firstname: '',
-        lastname: '',
+        username: '',
+        firstName: '',
+        lastName: '',
       },
       menu,
     } = this.props;
     const menuHeaderDropdown = (
-      <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
-        {menu && (
-          <Menu.Item key="center">
-            <UserOutlined />
-            Personal Center
-          </Menu.Item>
-        )}
-        {menu && (
-          <Menu.Item key="settings">
-            <SettingOutlined />
-            Settings
-          </Menu.Item>
-        )}
+      <Menu className={styles.menu} selectedKeys={['editprofile']} onClick={this.onMenuClick}>
         {menu && <Menu.Divider />}
-
+        <Menu.Item key="editprofile">
+          <ProfileOutlined />
+          Edit Profile
+        </Menu.Item>
+        {menu && <Menu.Divider />}
         <Menu.Item key="logout">
           <LogoutOutlined />
           Logout
         </Menu.Item>
+        {menu && <Menu.Divider />}
       </Menu>
     );
     return currentUser && currentUser.id ? (
       <HeaderDropdown overlay={menuHeaderDropdown}>
         <span className={`${styles.action} ${styles.account}`}>
-          <span className={`${styles.name} anticon`}>{currentUser.firstname}</span>
-          <span className={`${styles.name} anticon`}>{currentUser.lastname}</span>
-        </span>
-        <span className={`${styles.action} ${styles.account}`}>
-          <span className={`${styles.name} anticon`}>({currentUser.id})</span>
+            <UserOutlined/>&nbsp;{currentUser.firstName}, {currentUser.lastName}
+            ({currentUser.username || currentUser.id})
         </span>
       </HeaderDropdown>
     ) : (

@@ -16,8 +16,8 @@
             path: '/user/login',
             component: './User/login',
           },{
-            name: 'Profile ',
-            path: '/user/profile',
+            name: 'Edit Profile',
+            path: '/user/editprofile',
             component: './User/profile',
           }
         ],
