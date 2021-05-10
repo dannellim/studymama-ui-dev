@@ -1,4 +1,4 @@
-import request from '@/utils/request';
+import request, {authorizedRequest} from '@/utils/request';
 import {AUTHENTICATE, REFRESH_TOKEN} from "@/services/resourceUrl";
 
 export type LoginParamsType = {
@@ -22,7 +22,7 @@ export async function accountLogin(params: LoginParamsType) {
 }
 
 export async function refreshLogin(params: LoginParamsType) {
-  return request(REFRESH_TOKEN,
+  return authorizedRequest(REFRESH_TOKEN,
     {
       method: 'POST',
       data: JSON.stringify(params),

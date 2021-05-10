@@ -29,7 +29,7 @@
             routes: [
               {
                 path: '/',
-                redirect: '/welcome',
+                redirect: '/user/login',
               },
               {
                 path: '/welcome',
@@ -68,10 +68,11 @@
             component: './404',
           },
         ],
-      },
+      }
     ],
   },
   {
     component: './404',
   },
 ];
+

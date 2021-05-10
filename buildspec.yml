@@ -1,22 +1,38 @@
 version: 0.2
+
 phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+    commands:
+      # Install dependencies needed for running tests
+      - npm install
+
+      # Upgrade AWS CLI to the latest version
+      - pip3 install --upgrade awscli
   pre_build:
     commands:
-      #installs dependencies into the node_modules/ directory
-      - npm install
-  build:
-    commands:
-      - echo Build started on `date`
-      - echo Compiling
-      - npm run build
+      # Discover and run unit tests in the 'tests' directory
+      - npm test
   post_build:
     commands:
-      - echo Build completed on `date`
-# Include only the files required for your application to run.
+      # Remove existing node_modules to clear dev dependencies
+      - rm -r node_modules
+
+      # Install runtime dependencies
+      - npm install --production
+
+      # Do not remove this statement. This command is required for AWS CodeStar projects.
+      # Update the AWS Partition, AWS Region, account ID and project ID in the project ARN in template-configuration.json file so AWS CloudFormation can tag project resources.
+      - sed -i.bak 's/\$PARTITION\$/'${PARTITION}'/g;s/\$AWS_REGION\$/'${AWS_REGION}'/g;s/\$ACCOUNT_ID\$/'${ACCOUNT_ID}'/g;s/\$PROJECT_ID\$/'${PROJECT_ID}'/g' template-configuration.json
 artifacts:
   files:
-    - public/**/*
-    - src/**/*
+    - template.yml
+    - README.md
     - package.json
+    - app.js
     - appspec.yml
-    - scripts/**/*
+    - scripts/*
+    - node_modules/**/*
+    - public/**/*
+    - template-configuration.json

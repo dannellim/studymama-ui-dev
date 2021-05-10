@@ -8,7 +8,10 @@ services:
     networks:
       - studymama_default
     ports:
-      - "8001:8001"
+      - "8000:8000"
+    environment:
+      API_URL: http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8080
+      STUDYMAMA_UI: http://localhost:8080
 
 networks:
   studymama_default:

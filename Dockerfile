@@ -8,12 +8,12 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
-RUN npm install
+#RUN npm install
 # If you are building your code for production
-# RUN npm ci --only=production
+RUN npm ci --only=production
 
 # Bundle app source
-COPY . .
+COPY dist/* ./
 
 EXPOSE 8000
-CMD ["yarn", "start"]
+CMD ["cross-env-shell", "UI_ORIGIN_URL=http://localhost:8080", "API_URL=http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8080", "UMI_ENV=prod", "umi"]

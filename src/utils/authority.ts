@@ -29,3 +29,14 @@ export function setAuthority(authority: string | string[]): void {
   // auto reload
   reloadAuthorized();
 }
+
+export function setToken(token: string): void {
+  localStorage.setItem('sm-token', token);
+  // auto reload
+  reloadAuthorized();
+}
+
+export function getToken(): string {
+  const smToken = localStorage.getItem('sm-token');
+  return smToken || "none";
+}
