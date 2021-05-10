@@ -1,5 +1,6 @@
 import request from '@/utils/request';
-import type {PostListParams, Post} from './data.d';
+import type {PostListParams} from './data.d';
+import {Post} from "@/models/post";
 
 export async function getAllCategories() {
   return request('http://localhost:8080/categoryList');

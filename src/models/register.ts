@@ -3,7 +3,7 @@ import { registerAccount } from '@/services/register';
 import { setAuthority } from '@/utils/authority';
 import { message } from 'antd';
 
-export type StateType = {
+export type RegisterStateType = {
   status?: 'ok' | 'error';
   type?: string;
   currentAuthority?: 'user' | 'guest' | 'admin';
@@ -11,16 +11,16 @@ export type StateType = {
 
 export type RegisterModelType = {
   namespace: string;
-  state: StateType;
+  state: RegisterStateType;
   effects: {
     register: Effect;
   };
   reducers: {
-    registerUser: Reducer<StateType>;
+    registerUser: Reducer<RegisterStateType>;
   };
 };
 
-const Model: RegisterModelType = {
+const RegisterModel: RegisterModelType = {
   namespace: 'register',
 
   state: {
@@ -29,17 +29,19 @@ const Model: RegisterModelType = {
 
   effects: {
     *register({ payload }, { call, put }) {
-      const {data, response} = yield call(registerAccount, payload);
+      const { data, response } = yield call(registerAccount, payload);
       if (response && response.ok) {
-          message.success(`User ${data.username} registered successfully. User Id: ${data.id}`)
-          yield put({
-            type: 'registerUser',
-            payload: data,
-          });
+        message.success(
+          `User ${data.username} registered successfully. User Id: ${data.user_profile_id}`,
+        );
+        yield put({
+          type: 'registerUser',
+          payload: data,
+        });
       } else {
-        message.error("User registration failed.");
+        message.error('User registration failed.');
       }
-    }
+    },
   },
 
   reducers: {
@@ -51,12 +53,12 @@ const Model: RegisterModelType = {
       }
       return {
         ...state,
-        status: ( payload.token !== undefined )?"ok":"error",
-        type: payload.token,
+        status: payload.token !== undefined ? 'ok' : 'error',
+        type: 'login',
         token: payload.token,
       };
     },
   },
 };
 
-export default Model;
+export default RegisterModel;

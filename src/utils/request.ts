@@ -1,6 +1,7 @@
 import {extend} from 'umi-request';
 import { notification } from 'antd';
-import {getAuthority} from "@/utils/authority";
+import {getToken} from "@/utils/authority";
+import {getStudyMamaUi} from "@/utils/utils";
 
 const codeMessage: { [status: number]: string } = {
   200: 'The server successfully returned the requested data.',
@@ -40,18 +41,18 @@ const errorHandler = (error: { response: Response }): Response => {
   return response;
 };
 
-function createRequest() {
+function createRequestWithAuthorization() {
   const myRequest = extend({
     errorHandler, // default error handling
     getResponse: true,
     headers: // Does the default request bring cookie
       {
-        'Access-Control-Allow-Origin': 'http://localhost:8080',
-        Authorization: JSON.stringify(getAuthority("token")),
+        'Access-Control-Allow-Origin': JSON.stringify(getStudyMamaUi()),
+        Authorization: 'Bearer ' + getToken(),
       }
   });
   return myRequest;
 }
-const request =  createRequest();
-
+const request =  createRequestWithAuthorization();
+export const authorizedRequest = createRequestWithAuthorization();
 export default request;

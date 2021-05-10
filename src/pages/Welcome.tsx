@@ -1,55 +1,19 @@
-import React from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
-import {Card, Alert, Image, Typography, Row, Col} from 'antd';
-import { useIntl, FormattedMessage } from 'umi';
+import React, {useState} from 'react';
+import {PageContainer} from '@ant-design/pro-layout';
+import {Card, Alert, Image, Typography, Row, Col, message} from 'antd';
+import {useIntl, connect, FormattedMessage} from 'umi';
 import styles from './Welcome.less';
 import train from '../assets/train-hand.svg';
 import fastFood from '../assets/fast-food.svg';
 import school from '../assets/school.svg';
 import ReactWordcloud, {Word} from 'react-wordcloud';
 import { Input } from 'antd';
+import type { PostParamsType } from '@/services/post';
+import type { ConnectState } from '@/models/connect';
+import type { Dispatch } from 'umi';
+import {getCategoryListSvc} from "@/services/post";
 
 const { Search } = Input;
-
-const searchFor = (searchTxt:string) => {
-  window.location.href = `http://localhost:8080/list?category=${searchTxt}`;
-}
-
-const wordCloudCallback = {
-  onWordClick: (word: Word) => searchFor(word.text),
-}
-
-const categoryList = [
-  {
-    text: 'accomodation',
-    value: 10,
-  },{
-    text: 'hospital',
-    value: 10,
-  },{
-    text: 'coffee',
-    value: 10,
-  },{
-    text: 'assignment',
-    value: 10,
-  },
-  {
-    text: 'enrichment',
-    value: 9,
-  },
-  {
-    text: 'transport',
-    value: 8,
-  },
-  {
-    text: 'food',
-    value: 8,
-  },
-  {
-    text: 'studymama',
-    value: 1,
-  },
-]
 
 const CodePreview: React.FC = ({ children }) => (
   <pre className={styles.pre}>
@@ -59,11 +23,71 @@ const CodePreview: React.FC = ({ children }) => (
   </pre>
 );
 
-export default (): React.ReactNode => {
+export type SearchProps = {
+  dispatch: Dispatch;
+  welcomeUser : PostParamsType;
+  submitting?: boolean;
+};
+
+const SearchCategoryCard: React.FC<{
+  category?: string,
+  categories: Word[],
+  onWordClickAction: any,
+}> = ({category,categories,onWordClickAction,}) => (
+    <Card bodyStyle={{alignContent: "center"}}>
+      <CodePreview>
+        <FormattedMessage id="pages.welcome.search.keywords" defaultMessage="Popular Searches" /><br/>
+        <ReactWordcloud words={categories || []} callbacks={{onWordClick: onWordClickAction}} />
+      </CodePreview>
+    </Card>
+);
+
+const WelcomePage: React.FC<SearchProps> = (props) => {
+  const { welcomeUser = {}, submitting } = props;
+  const { keyword, category, categoryList = getCategoryList() } = welcomeUser;
+  const {} = useState({});
   const intl = useIntl();
+  console.log(submitting);
+
+  function getCategoryList() {
+    const categoryList: string[] = getCategoryListSvc();
+    const wordList: Word[] = [];
+
+    categoryList.forEach((value) => {
+      wordList.push({
+        key: value,
+        text: value,
+        value: 10,
+      });
+    });
+    return wordList;
+  }
+
+  const searchForKeyword = (values: PostParamsType) => {
+    message.success(`searching posts for : ${values.keyword}`);
+    const { dispatch } = props;
+    dispatch({
+      type: 'post/searchByKeywords',
+      payload: { keyword: values.keyword },
+    });
+  }
+
+  const searchForCategory = (value: PostParamsType) => {
+      console.log(value.category || value.key);
+      message.success(`searching posts for : ${value.category || value.key}`);
+      const { dispatch } = props;
+      dispatch({
+        type: 'post/searchByCategory',
+        payload: {
+          category: value.category || value.key,
+          currentPage: 1,
+          pageSize: 1,
+        },
+      });
+    }
+
   return (
     <PageContainer>
-
       <Card bodyStyle={{alignItems: "center"}}>
         <Alert
           message={intl.formatMessage({
@@ -79,7 +103,6 @@ export default (): React.ReactNode => {
           }}
         />
       </Card>
-
       <div>
         <Row gutter={16}>
           <Col span={24}>
@@ -88,11 +111,12 @@ export default (): React.ReactNode => {
                 <FormattedMessage id="pages.welcome.search.category" defaultMessage="Enter Search Category" /><br/>
                 <>
                   <br />
-                  <Search name="searchText"
+                  <Search name="keyword"
                           placeholder="input search text"
                           enterButton="Search"
                           size="large"
-                          onSearch={(value, post) => searchFor(value)}
+                          value={keyword}
+                          onSearch={(value) => {searchForKeyword({keyword: value})}}
                         />
                 </>
               </CodePreview>
@@ -101,12 +125,7 @@ export default (): React.ReactNode => {
         </Row>
         <Row gutter={16}>
           <Col span={24}>
-            <Card bodyStyle={{alignContent: "center"}}>
-              <CodePreview>
-                <FormattedMessage id="pages.welcome.search.keywords" defaultMessage="Popular Searches" /><br/>
-                <ReactWordcloud words={categoryList} callbacks={wordCloudCallback}/>
-              </CodePreview>
-            </Card>
+            <SearchCategoryCard category={category} categories={categoryList || []} onWordClickAction = {searchForCategory}/>
           </Col>
         </Row>
         <Row gutter={16}>
@@ -118,7 +137,7 @@ export default (): React.ReactNode => {
                   href="#"
                   rel="noopener noreferrer"
                   target="_self"
-                  onClick={() => searchFor('school')}
+                  onClick={() => searchForCategory({category: 'school'})}
                 >
                   <Image width={300} src={school} preview={false} />
                 </a>
@@ -133,7 +152,7 @@ export default (): React.ReactNode => {
                   href="#"
                   rel="noopener noreferrer"
                   target="_self"
-                  onClick={() => searchFor('transport')}
+                  onClick={() => searchForCategory({category: 'transport'})}
                 >
                   <Image width={300} src={train} preview={false}/>
                 </a>
@@ -148,7 +167,7 @@ export default (): React.ReactNode => {
                   href="#"
                   rel="noopener noreferrer"
                   target="_self"
-                  onClick={() => searchFor('food')}
+                  onClick={() => searchForCategory({category: 'food'})}
                 >
                   <Image width={300} src={fastFood} preview={false}/>
                 </a>
@@ -156,8 +175,21 @@ export default (): React.ReactNode => {
             </Card>
           </Col>
         </Row>
-
       </div>
     </PageContainer>
   );
 };
+
+export default connect(({ keyword, category, post, currentPage, pageSize, loading }: ConnectState) =>
+  ({
+    submitting: loading.effects['post/searchByCategory'] || loading.effects['post/searchByKeyword'] || loading.effects['post/category'],
+    welcomeUser: {
+         keyword: keyword,
+         category: category,
+         currentPage: currentPage,
+         pageSize: pageSize,
+         post: post,
+    }
+  })
+)(WelcomePage);
+
