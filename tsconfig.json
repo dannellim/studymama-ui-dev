@@ -35,6 +35,7 @@
     ".stylelintrc.js",
     ".prettierrc.js",
     "jest.config.js",
+    ".umirc.ts",
     ".umirc.qa.ts",
     "mock/*"
   ],
