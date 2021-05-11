@@ -17,6 +17,7 @@ import type { RegisterParamsType } from '@/services/register';
 import type { ConnectState } from '@/models/connect';
 
 import styles from './index.less';
+import {getContentAppUrl} from "@/utils/utils";
 
 export type LoginProps = {
   dispatch: Dispatch;
@@ -228,26 +229,25 @@ const Login: React.FC<LoginProps> = (props) => {
             />
           </>
         )}
-
         {actionTab === 'login' && (
           <div
             style={{
               marginBottom: 24,
             }}
           >
-            <ProFormCheckbox noStyle name="autoLogin">
-              <FormattedMessage id="pages.login.rememberMe" defaultMessage="Remember me" />
-            </ProFormCheckbox>
-            <a
-              style={{
-                float: 'right',
-              }}
-            >
-              <FormattedMessage
-                id="pages.login.forgotPassword"
-                defaultMessage="Forgot Password ?"
-              />
-            </a>
+            <Row >
+              <Col span={16}>
+                <ProFormCheckbox noStyle name="autoLogin">
+                  <FormattedMessage id="pages.login.rememberMe" defaultMessage="Remember me" />
+                </ProFormCheckbox>
+              </Col>
+              <Col span={16}>
+                { getContentAppUrl() !== undefined &&
+                <ProFormCheckbox noStyle name="gotoContentSite">
+                  <FormattedMessage id="pages.login.gotoContentSite" defaultMessage="Go to Content Site" />
+                </ProFormCheckbox>}
+              </Col>
+            </Row>
           </div>
         )}
       </ProForm>

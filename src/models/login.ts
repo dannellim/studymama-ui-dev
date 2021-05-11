@@ -39,6 +39,7 @@ const Model: LoginModelType = {
 
   effects: {
     *login({ payload }, { call, put }) {
+      const redirectUrl = payload.gotoContentSite ? getContentAppUrl() : '/welcome';
       const {data, response} = yield call(accountLogin, payload);
       resetCurrent();
       if (response === undefined || !response.ok) {
@@ -60,7 +61,7 @@ const Model: LoginModelType = {
             userProfile: userProfile.data,
           });
         }
-        window.location.href = `/${getContentAppUrl()||'welcome'}`;
+        window.location.href = redirectUrl;
       }
     },
     logout() {

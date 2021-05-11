@@ -14,6 +14,7 @@ import type { PostParamsType } from '@/services/post';
 import {getCategoryListSvc} from "@/services/post";
 import type {ConnectState} from "@/models/connect";
 import type {UserModelState} from "@/models/connect";
+import {random} from "@/utils/utils";
 
 const { Search } = Input;
 
@@ -40,14 +41,19 @@ const SearchCategoryCard: React.FC<{
     <Card bodyStyle={{alignContent: "center"}}>
       <CodePreview>
         <FormattedMessage id="pages.welcome.search.keywords" defaultMessage="Popular Searches" /><br/>
-        <ReactWordcloud words={categories || []} callbacks={{onWordClick: onWordClickAction}} />
+        <ReactWordcloud words={categories || []}
+                        callbacks={{onWordClick: onWordClickAction}}
+                        options={{enableTooltip: false,
+                                  padding: 12,
+                                  fontSizes: [30, 30],
+                                  rotationAngles: [360, 360]}}/>
       </CodePreview>
     </Card>
 );
 
 const Welcome: React.FC<SearchProps> = (props) => {
   const { postParameters, submitting } = props;
-  const { key, keyword, category, categoryList, currentPage, pageSize = getCategoryList() } = postParameters;
+  const { key, keyword, category, categoryList = getCategoryList(), currentPage = 1, pageSize = 10 } = postParameters;
   const {} = useState({});
   const intl = useIntl();
   console.log(submitting);
@@ -60,7 +66,7 @@ const Welcome: React.FC<SearchProps> = (props) => {
       wordList.push({
         key: value,
         text: value,
-        value: 10,
+        value: random(2,8),
       });
     });
     return wordList;
@@ -108,8 +114,8 @@ const Welcome: React.FC<SearchProps> = (props) => {
       </Card>
       <div>
         <Row gutter={16}>
-          <Col span={24}>
-            <Card bodyStyle={{alignContent: "center"}}>
+          <Col span={12}>
+            <Card bodyStyle={{alignContent: "center"}} >
               <CodePreview>
                 <FormattedMessage id="pages.welcome.search.category" defaultMessage="Enter Search Category" /><br/>
                 <>
@@ -125,12 +131,15 @@ const Welcome: React.FC<SearchProps> = (props) => {
               </CodePreview>
             </Card>
           </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col span={24}>
-            <SearchCategoryCard category={category} categories={categoryList || []} onWordClickAction = {searchForCategory}/>
+          <Col span={12}>
+            <SearchCategoryCard category={category} categories={categoryList} onWordClickAction = {searchForCategory}/>
           </Col>
         </Row>
+        {/*<Row gutter={16}>*/}
+        {/*  <Col span={24}>*/}
+        {/*    <SearchCategoryCard category={category} categories={categoryList || []} onWordClickAction = {searchForCategory}/>*/}
+        {/*  </Col>*/}
+        {/*</Row>*/}
         <Row gutter={16}>
           <Col span={8}>
             <Card bodyStyle={{alignContent: "center"}}>
