@@ -1,6 +1,7 @@
 import request from '@/utils/request';
 import type {PostListParams} from './data.d';
 import {Post} from "@/models/post";
+import {updatePostSvc} from "@/services/post";
 
 export async function getAllCategories() {
   return request('http://localhost:8080/categoryList');
@@ -45,13 +46,14 @@ export async function deletePost(params: { id?: number }) {
 }
 
 export async function addPost(params: Post) {
-  return request('/post', {
-    method: 'POST',
-    data: {
-      ...params,
-      method: 'post',
-    },
-  });
+  // return request('/post', {
+  //   method: 'POST',
+  //   data: {
+  //     ...params,
+  //     method: 'post',
+  //   },
+  // });
+  return updatePostSvc(params);
 }
 
 export async function updatePost(params: Post) {

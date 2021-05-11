@@ -1,16 +1,19 @@
 import {PlusOutlined, SmileOutlined} from '@ant-design/icons';
 import { Button, message, Drawer } from 'antd';
 import React, { useState, useRef } from 'react';
-import { useIntl, FormattedMessage } from 'umi';
+import {useIntl, FormattedMessage, connect} from 'umi';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
+import {ModalForm, ProFormList, ProFormSelect, ProFormText, ProFormTextArea} from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import UpdateForm, {FormValueType} from './components/UpdateForm';
-import {allPost, updatePost, addPost, deletePost} from './service';
+import {updatePost, addPost, deletePost} from './service';
 import {Post} from "@/models/post";
+import {getCategoryListSvc, getPost, searchPostsByCategory} from "@/services/post";
+import {ConnectState} from "@/models/connect";
+import {SearchProps} from "@/pages/Welcome";
 
 const handleAdd = async (fields: Post) => {
   const hide = message.loading('Adding..');
@@ -71,8 +74,8 @@ async function handleUpdateForm(value: FormValueType) {
   };
   return handleUpdate(post, 0);
 }
-
-const PostList: React.FC = () => {
+const PostList: React.FC<SearchProps> = (props) => {
+  const { postParameters } = props;
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
 
@@ -83,12 +86,11 @@ const PostList: React.FC = () => {
   const [selectedRowsState, setSelectedRows] = useState<Post[]>([]);
 
   const intl = useIntl();
-
   const columns: ProColumns<Post>[] = [
     {
       title: (
         <FormattedMessage
-          id="pages.searchTable.updateForm.ruleName.nameLabel"
+          id="pages.searchTable.updateForm.post.titleLabel"
           defaultMessage="Post Title"
         />
       ),
@@ -115,7 +117,8 @@ const PostList: React.FC = () => {
     {
       title: <FormattedMessage id="pages.searchTable.category" defaultMessage="Category" />,
       dataIndex: 'category',
-      valueType: 'textarea',
+      valueType: 'select',
+      valueEnum: getCategoryListSvc,
     },
     {
       title: <FormattedMessage id="pages.searchTable.rating" defaultMessage="Rating" />,
@@ -188,14 +191,19 @@ const PostList: React.FC = () => {
             <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
           </Button>,
         ]}
-        request={(params, sorter, filter) => allPost({ ...params, sorter, filter })}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
             setSelectedRows(selectedRows);
           },
         }}
+        request={(params, sorter, filter) => searchPostsByCategory({ ...{category: postParameters?.key || postParameters?.category || 'school',
+            currentPage: 1,
+            pageSize: 10,}, sorter, filter }).content}
       />
+
+
+
       {selectedRowsState?.length > 0 && (
         <FooterToolbar
           extra={
@@ -231,7 +239,7 @@ const PostList: React.FC = () => {
       )}
       <ModalForm
         title={intl.formatMessage({
-          id: 'pages.searchTable.createForm.newPost',
+          id: 'pages.searchTable.createPost.newPost',
           defaultMessage: 'New Post',
         })}
         width="400px"
@@ -253,16 +261,22 @@ const PostList: React.FC = () => {
               required: true,
               message: (
                 <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
+                  id="pages.searchTable.createpost.post"
+                  defaultMessage="Post title is required"
                 />
               ),
             },
           ]}
           width="md"
-          name="name"
+          name="title"
         />
-        <ProFormTextArea width="md" name="desc" />
+        <ProFormTextArea width="md" name="description" label="Description" />
+        <ProFormSelect
+          options={getCategoryListSvc() || []}
+          width="md"
+          name="category"
+          label="Category"
+        />
       </ModalForm>
       <UpdateForm
         onSubmit={async (value) => {
@@ -308,5 +322,8 @@ const PostList: React.FC = () => {
     </PageContainer>
   );
 };
-
-export default PostList;
+export default connect(({  postParam, loading }: ConnectState) => ({
+  submitting: (loading.effects['post/searchByCategory'] || loading.effects['post/searchByKeyword'] || loading.effects['post/category']),
+  postParameters: postParam || {},
+}))(PostList);
+//export default PostList;
