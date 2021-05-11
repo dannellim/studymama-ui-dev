@@ -21,7 +21,7 @@
     "precommit": "lint-staged",
     "prettier": "prettier -c --write \"src/**/*\"",
     "start": "cross-env-shell CONTENT_APP_URL=http://www.facebook.com STUDYMAMA_UI=http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8000 API_URL=http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8080 MOCK=none UMI_ENV=dev umi dev",
-    "start:dev-local-ui": "cross-env-shell CONTENT_APP_URL=http://www.facebook.com STUDYMAMA_UI=http://localhost:8000 API_URL=http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8080 MOCK=none UMI_ENV=dev umi dev",
+    "start:dev-local-ui": "cross-env-shell CONTENT_APP_URL=http://www.facebook.com STUDYMAMA_UI=http://localhost:8000 API_URL=http://studymama-load-balancer-795957589.ap-southeast-1.elb.amazonaws.com:8080 MOCK=none UMI_ENV=prod umi dev",
     "start:dev": "cross-env-shell CONTENT_APP_URL=welcome STUDYMAMA_UI=http://localhost:8000 API_URL=http://localhost:8080 REACT_APP_ENV=dev MOCK=none UMI_ENV=dev umi dev",
     "start:no-mock": "cross-env MOCK=none UMI_ENV=dev umi dev",
     "start:no-ui": "cross-env UMI_UI=none UMI_ENV=dev umi dev",
@@ -97,7 +97,8 @@
     "lint-staged": "^10.0.0",
     "mockjs": "^1.0.1-beta3",
     "prettier": "^2.0.1",
-    "puppeteer-core": "^8.0.0",
+    "puppeteer-core": "^9.1.1",
+    "react-test-renderer": "^17.0.2",
     "stylelint": "^13.0.0",
     "typescript": "^4.0.3"
   },
