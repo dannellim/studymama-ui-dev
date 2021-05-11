@@ -33,8 +33,9 @@ export const getApiBaseUrl = (): string => {
 };
 
 
-export const getContentAppUrl = (): string => {
+export const getContentAppUrl = (): string | undefined => {
   const {CONTENT_APP_URL} = process.env
-  return CONTENT_APP_URL || 'http://www.yahoo.com';
+  return CONTENT_APP_URL || undefined;
 };
 
+export const random = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min;
