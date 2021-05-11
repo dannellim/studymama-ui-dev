@@ -38,3 +38,4 @@ export const getContentAppUrl = (): string | undefined => {
   return CONTENT_APP_URL || undefined;
 };
 
+export const random = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min;
