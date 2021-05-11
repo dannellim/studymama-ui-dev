@@ -65,7 +65,7 @@ export async function getPost(params: PostParamsType) {
   });
 }
 
-export async function updatePost(params: PostParamsType) {
+export async function updatePostSvc(params: PostParamsType) {
   const paramString = JSON.stringify(params);
   return request(PUT_POST,
     {
