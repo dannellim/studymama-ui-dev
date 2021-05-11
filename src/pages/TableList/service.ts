@@ -1,7 +1,8 @@
 import request from '@/utils/request';
 import type {PostListParams} from './data.d';
-import {Post} from "@/models/post";
-import {updatePostSvc} from "@/services/post";
+import {GeoPoint, Picture, Post} from "@/models/post";
+import {PostParamsType, updatePostSvc} from "@/services/post";
+import {GET_ALL_POST, SEARCH_POST_BY_KEYWORD} from "@/services/resourceUrl";
 
 export async function getAllCategories() {
   return request('http://localhost:8080/categoryList');
@@ -30,7 +31,7 @@ export async function searchPostByCategory(params?: PostListParams) {
 }
 
 export async function searchPostByKeywordInTitleDescCategory(params?: PostListParams) {
-  return request('/searchPostByKeywordInTitleDescCategory', {
+  return request(SEARCH_POST_BY_KEYWORD, {
     params,
   });
 }
@@ -63,5 +64,32 @@ export async function updatePost(params: Post) {
       ...params,
       method: 'update',
     },
+  });
+}
+
+
+export async function allPosts(params: PostParamsType) {
+  return request(`${GET_ALL_POST}?currentPage=${params.currentPage}&pageSize=${params.pageSize}` ,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    }).then((response) => {
+    if (response.response.ok) {
+      return {
+        data: response.data.content,
+        success: true,
+        total: response.data.totalElements,
+      };
+    } else {
+      return {
+        data: [],
+        success: false,
+        total: 0,
+      };
+    }
+  }).catch((error) => {
+    return error;
   });
 }

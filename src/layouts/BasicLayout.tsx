@@ -14,6 +14,7 @@ import RightContent from '@/components/GlobalHeader/RightContent';
 import type { ConnectState } from '@/models/connect';
 import { getMatchMenu } from '@umijs/route-utils';
 import logo from '../assets/logo.jpg';
+import {getRedirect2Content} from "@/utils/authority";
 
 const noMatch = (
   <Result
@@ -51,7 +52,7 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
 
 export const defaultFooterDom = (
   <DefaultFooter
-    copyright={`${new Date().getFullYear()} Produced by "Team 7 ( Dan, Prakash, Liye, Xinyi, Aung)"`}
+    copyright={`${new Date().getFullYear()} Produced by "Team 7 (Aung, Dan, Liye, Prakash, Xinyi)"`}
     links={[
       {
         key: 'License',
@@ -62,7 +63,7 @@ export const defaultFooterDom = (
       {
         key: 'github',
         title: <GithubOutlined />,
-        href: 'https://github.com/prakashkaul/studymama-ui.git',
+        href: 'https://github.com/prakashkaul/studymama-ui-dev.git',
         blankTarget: true,
       },
       {
@@ -161,7 +162,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
         return menuData || [];
       }}
       waterMarkProps={{
-        content: 'Studymama',
+        content: '',
         fontColor: 'rgba(24,144,255,0.15)',
       }}
     >
@@ -173,6 +174,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
 };
 
 export default connect(({ global, settings }: ConnectState) => ({
-  collapsed: global.collapsed,
+  collapsed: getRedirect2Content() || global.collapsed,
   settings,
 }))(BasicLayout);

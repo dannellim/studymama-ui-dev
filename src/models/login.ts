@@ -3,7 +3,7 @@ import type { Reducer, Effect } from 'umi';
 import { history } from 'umi';
 
 import { accountLogin } from '@/services/login';
-import { resetCurrent, setUserProfile, setToken, getUserId, setUserId } from '@/utils/authority';
+import {resetCurrent, setUserProfile, setToken, getUserId, setUserId, setRedirect2Content} from '@/utils/authority';
 import {getContentAppUrl, getPageQuery} from '@/utils/utils';
 import { message } from 'antd';
 import {queryCurrent} from "@/services/user";
@@ -39,7 +39,6 @@ const Model: LoginModelType = {
 
   effects: {
     *login({ payload }, { call, put }) {
-      const redirectUrl = payload.gotoContentSite ? getContentAppUrl() : '/welcome';
       const {data, response} = yield call(accountLogin, payload);
       resetCurrent();
       if (response === undefined || !response.ok) {
@@ -49,6 +48,7 @@ const Model: LoginModelType = {
           type: 'changeLoginStatus',
           payload: data,
           username: payload.username,
+          gotoContentSite: payload.gotoContentSite,
         });
         message.success('Login Successful!');
         const userProfile = yield call(queryCurrent, getUserId());
@@ -61,7 +61,7 @@ const Model: LoginModelType = {
             userProfile: userProfile.data,
           });
         }
-        window.location.href = redirectUrl;
+        window.location.href = '/welcome';
       }
     },
     logout() {
@@ -79,9 +79,10 @@ const Model: LoginModelType = {
   },
 
   reducers: {
-    changeLoginStatus(state, { payload, username }) {
+    changeLoginStatus(state, { payload, username, gotoContentSite }) {
       setToken(payload.token);
       setUserId(username);
+      setRedirect2Content(gotoContentSite?'1':'0');
       return {
         ...state,
         status: ( payload.token )?"ok":"error",

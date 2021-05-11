@@ -63,7 +63,7 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
           {children}
         </div>
         <DefaultFooter
-          copyright={`${new Date().getFullYear()} Produced by "Team 7 ( Dan, Prakash, Liye, Xinyi, Aung)"`}
+          copyright={`${new Date().getFullYear()} Produced by "Team 7 (Aung, Dan, Liye, Prakash, Xinyi)"`}
           links={[
             {
               key: 'License',

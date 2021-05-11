@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
-import {Card, Alert, Image, Typography, Row, Col, message} from 'antd';
+import {Card, Alert, Image, Typography, Row, Col, message, AutoComplete} from 'antd';
 import {useIntl, FormattedMessage} from 'umi';
 import {connect} from 'umi';
 import type { Dispatch } from 'umi';
@@ -14,7 +14,10 @@ import type { PostParamsType } from '@/services/post';
 import {getCategoryListSvc} from "@/services/post";
 import type {ConnectState} from "@/models/connect";
 import type {UserModelState} from "@/models/connect";
-import {random} from "@/utils/utils";
+import {getContentAppUrl, random} from "@/utils/utils";
+import {searchPostByKeywordInTitleDescCategory} from "@/pages/TableList/service";
+import Iframe from "react-iframe";
+import {getRedirect2Content} from "@/utils/authority";
 
 const { Search } = Input;
 
@@ -53,7 +56,7 @@ const SearchCategoryCard: React.FC<{
 
 const Welcome: React.FC<SearchProps> = (props) => {
   const { postParameters, submitting } = props;
-  const { key, keyword, category, categoryList = getCategoryList(), currentPage = 1, pageSize = 10 } = postParameters;
+  const { suggestions, key, keyword, category, categoryList = getCategoryList(), currentPage = 1, pageSize = 10 } = postParameters;
   const {} = useState({});
   const intl = useIntl();
   console.log(submitting);
@@ -81,6 +84,15 @@ const Welcome: React.FC<SearchProps> = (props) => {
     });
   }
 
+  const searchForSuggestions = (values: PostParamsType) => {
+    searchPostByKeywordInTitleDescCategory(values).then((res) => {
+      console.log(res.data);
+      props.postParameters = {suggestions : res.data};
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
+
   const searchForCategory = (value: PostParamsType) => {
       console.log(value.category || value.key);
       message.success(`searching posts for : ${value.category || value.key}`);
@@ -94,101 +106,122 @@ const Welcome: React.FC<SearchProps> = (props) => {
         },
       });
     }
-
+  const contentUrl = getContentAppUrl();
+  const gotoContentSite = getRedirect2Content();
   return (
-    <PageContainer>
-      <Card bodyStyle={{alignItems: "center"}}>
-        <Alert
-          message={intl.formatMessage({
-            id: 'pages.welcome.alertMessage',
-            defaultMessage: 'Welcome to StudyMama! Your one stop shop for faster and more relevant search results for your learning needs.',
-          })}
-          type="success"
-          showIcon
-          banner
-          style={{
-            margin: -12,
-            marginBottom: 24,
-          }}
-        />
-      </Card>
-      <div>
-        <Row gutter={16}>
-          <Col span={12}>
-            <Card bodyStyle={{alignContent: "center"}} >
-              <CodePreview>
-                <FormattedMessage id="pages.welcome.search.category" defaultMessage="Enter Search Category" /><br/>
-                <>
-                  <br />
-                  <Search name="keyword"
-                          placeholder="input search text"
-                          enterButton="Search"
-                          size="large"
-                          value={keyword}
-                          onSearch={(value) => {searchForKeyword({keyword: value})}}
-                        />
-                </>
-              </CodePreview>
-            </Card>
-          </Col>
-          <Col span={12}>
-            <SearchCategoryCard category={category} categories={categoryList} onWordClickAction = {searchForCategory}/>
-          </Col>
-        </Row>
-        {/*<Row gutter={16}>*/}
-        {/*  <Col span={24}>*/}
-        {/*    <SearchCategoryCard category={category} categories={categoryList || []} onWordClickAction = {searchForCategory}/>*/}
-        {/*  </Col>*/}
-        {/*</Row>*/}
-        <Row gutter={16}>
-          <Col span={8}>
-            <Card bodyStyle={{alignContent: "center"}}>
-              <CodePreview>
-                <FormattedMessage id="pages.welcome.search.school" defaultMessage="Schools & Tuition Centers" /><br/>
-                <a
-                  href="#"
-                  rel="noopener noreferrer"
-                  target="_self"
-                  onClick={() => searchForCategory({category: 'school'})}
-                >
-                  <Image width={300} src={school} preview={false} />
-                </a>
-              </CodePreview>
-            </Card>
-          </Col>
-          <Col span={8}>
-            <Card bodyStyle={{alignContent: "center"}}>
-              <CodePreview>
-                <FormattedMessage id="pages.welcome.search.transport" defaultMessage="Buses & Trains" /><br/>
-                <a
-                  href="#"
-                  rel="noopener noreferrer"
-                  target="_self"
-                  onClick={() => searchForCategory({category: 'transport'})}
-                >
-                  <Image width={300} src={train} preview={false}/>
-                </a>
-              </CodePreview>
-            </Card>
-          </Col>
-          <Col span={8}>
-            <Card bodyStyle={{alignContent: "center"}}>
-              <CodePreview>
-              <FormattedMessage id="pages.welcome.search.food" defaultMessage="Food Courts & Restaurants" /><br/>
-                <a
-                  href="#"
-                  rel="noopener noreferrer"
-                  target="_self"
-                  onClick={() => searchForCategory({category: 'food'})}
-                >
-                  <Image width={300} src={fastFood} preview={false}/>
-                </a>
-              </CodePreview>
-            </Card>
-          </Col>
-        </Row>
-      </div>
-    </PageContainer>
+      (contentUrl && gotoContentSite && <div className="smContainer">
+                        <Iframe className="smContainerFrame"
+                                url={contentUrl}
+                                height="800px" width="100%" scrolling="no"
+                                id="smSurrogate"
+                                position="relative"/>
+                      </div>)
+      ||
+      (
+      <PageContainer>
+        <Card bodyStyle={{alignItems: "center"}}>
+          <Alert
+            message={intl.formatMessage({
+              id: 'pages.welcome.alertMessage',
+              defaultMessage: 'Welcome to StudyMama! Your one stop shop for faster and more relevant search results for your learning needs.',
+            })}
+            type="success"
+            showIcon
+            banner
+            style={{
+              margin: -12,
+              marginBottom: 24,
+            }}
+          />
+        </Card>
+        <div>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Card bodyStyle={{alignContent: "center"}} >
+                <CodePreview>
+                  <FormattedMessage id="pages.welcome.search.category" defaultMessage="Enter Search Category" /><br/>
+                  <>
+                    <br />
+                    <AutoComplete
+                      dropdownClassName="certain-category-search-dropdown"
+                      dropdownMatchSelectWidth={500}
+                      style={{ width: 250 }}
+                      options={suggestions}
+                    >
+                      <Search name="keyword"
+                              placeholder="input search text"
+                              enterButton="Search"
+                              size="large"
+                              value={keyword}
+                              onChange={(evt) => {
+                                searchForSuggestions({keyword: evt.target.value, currentPage: 1, pageSize: 5})
+                              }}
+                              onSearch={(value) => {searchForKeyword({keyword: value})}}
+                      />
+                    </AutoComplete>
+                  </>
+                </CodePreview>
+              </Card>
+            </Col>
+            <Col span={12}>
+              <SearchCategoryCard category={category} categories={categoryList} onWordClickAction = {searchForCategory}/>
+            </Col>
+          </Row>
+          {/*<Row gutter={16}>*/}
+          {/*  <Col span={24}>*/}
+          {/*    <SearchCategoryCard category={category} categories={categoryList || []} onWordClickAction = {searchForCategory}/>*/}
+          {/*  </Col>*/}
+          {/*</Row>*/}
+          <Row gutter={16}>
+            <Col span={8}>
+              <Card bodyStyle={{alignContent: "center"}}>
+                <CodePreview>
+                  <FormattedMessage id="pages.welcome.search.school" defaultMessage="Schools & Tuition Centers" /><br/>
+                  <a
+                    href="#"
+                    rel="noopener noreferrer"
+                    target="_self"
+                    onClick={() => searchForCategory({category: 'school'})}
+                  >
+                    <Image width={300} src={school} preview={false} />
+                  </a>
+                </CodePreview>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card bodyStyle={{alignContent: "center"}}>
+                <CodePreview>
+                  <FormattedMessage id="pages.welcome.search.transport" defaultMessage="Buses & Trains" /><br/>
+                  <a
+                    href="#"
+                    rel="noopener noreferrer"
+                    target="_self"
+                    onClick={() => searchForCategory({category: 'transport'})}
+                  >
+                    <Image width={300} src={train} preview={false}/>
+                  </a>
+                </CodePreview>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card bodyStyle={{alignContent: "center"}}>
+                <CodePreview>
+                  <FormattedMessage id="pages.welcome.search.food" defaultMessage="Food Courts & Restaurants" /><br/>
+                  <a
+                    href="#"
+                    rel="noopener noreferrer"
+                    target="_self"
+                    onClick={() => searchForCategory({category: 'food'})}
+                  >
+                    <Image width={300} src={fastFood} preview={false}/>
+                  </a>
+                </CodePreview>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+      </PageContainer>
+      )
   );
 };
 
