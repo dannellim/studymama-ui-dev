@@ -1,5 +1,5 @@
 import { parse } from 'querystring';
-
+//import  Map  from '@types/google.maps';
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
 
@@ -32,10 +32,16 @@ export const getApiBaseUrl = (): string => {
   return API_URL || 'http://localhost:8080';
 };
 
-
 export const getContentAppUrl = (): string | undefined => {
   const {CONTENT_APP_URL} = process.env
   return CONTENT_APP_URL || undefined;
 };
 
 export const random = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min;
+
+export const initMap = (_lat: number, _lng: number) => {
+  // new Map(document.getElementById("map") as HTMLElement, {
+  //   center: { lat: _lat, lng: _lng },
+  //   zoom: 8,
+  // });
+}

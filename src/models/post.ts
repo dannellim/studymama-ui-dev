@@ -1,16 +1,16 @@
 import type { Reducer, Effect } from 'umi';
-import { searchPostsByKeywords, searchPostsByCategory, getPost, updatePost, getCategories} from '@/services/post';
+import { searchPostsByKeywords, searchPostsByCategory, getPost, updatePostSvc, getCategories} from '@/services/post';
 import { message } from 'antd';
 
 export type Post = {
-  id?: number;
+  id?: string;
   title?: string;
   description?: string;
   website?: string;
   location?: GeoPoint;
   status?: string;
-  post_dt?: string;
-  edited_dt?: string;
+  post_dt?: number;
+  edited_dt?: number;
   price?: string;
   category?: string;
   picture?: Picture;
@@ -98,7 +98,7 @@ const PostModel: PostModelType = {
       }
     },
     *update({ payload }, { call, put }) {
-      const { data, response } = yield call(updatePost, payload);
+      const { data, response } = yield call(updatePostSvc, payload);
       if (response && response.ok) {
         yield put({
           type: 'putPost',

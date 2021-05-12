@@ -3,6 +3,7 @@ import type { Reducer, Effect } from 'umi';
 import type { NoticeIconData } from '@/components/NoticeIcon';
 import { queryNotices } from '@/services/user';
 import type { ConnectState } from './connect.d';
+import {getRedirect2Content} from "@/utils/authority";
 
 export type NoticeItem = {
   id: string;
@@ -103,7 +104,7 @@ const GlobalModel: GlobalModelType = {
     changeLayoutCollapsed(state = { notices: [], collapsed: true }, { payload }): GlobalModelState {
       return {
         ...state,
-        collapsed: payload,
+        collapsed: getRedirect2Content() || payload,
       };
     },
     saveNotices(state, { payload }): GlobalModelState {
