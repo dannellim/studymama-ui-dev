@@ -63,4 +63,14 @@ export function resetCurrent(): void {
   localStorage.removeItem('sm-user-profile');
   localStorage.removeItem('sm-user-id');
   localStorage.removeItem('sm-token');
+  localStorage.removeItem('sm-content-redirect');
+}
+
+export function setRedirect2Content(redirect: string): void {
+  localStorage.setItem('sm-content-redirect', redirect);
+  reloadAuthorized();
+}
+
+export function getRedirect2Content(): boolean {
+  return localStorage.getItem('sm-content-redirect') === '1';
 }

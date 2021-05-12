@@ -1,8 +1,13 @@
 import request from "@/utils/request";
 import {allPost, searchPostByCategory, searchPostByKeywordInTitleDescCategory} from "@/pages/TableList/service";
-import {GET_CATEGORIES, SEARCH_POST_BY_CATEGORY, SEARCH_POST_BY_KEYWORD} from "@/services/resourceUrl";
+import {
+  GET_ALL_POST,
+  GET_CATEGORIES,
+  PUT_POST_form_submit,
+  SEARCH_POST_BY_CATEGORY,
+  SEARCH_POST_BY_KEYWORD
+} from "@/services/resourceUrl";
 import {GET_POST} from "@/services/resourceUrl";
-import {PUT_POST} from "@/services/resourceUrl";
 import {Post} from "@/models/post";
 
 export type PostParamsType = {
@@ -13,6 +18,7 @@ export type PostParamsType = {
   currentPage?: number,
   pageSize?: number,
   post?: Post,
+  suggestions?: Post[],
 };
 
 export async function searchPostsByKeywords(params: PostParamsType) {
@@ -67,7 +73,7 @@ export async function getPost(params: PostParamsType) {
 
 export async function updatePostSvc(params: PostParamsType) {
   const paramString = JSON.stringify(params);
-  return request(PUT_POST,
+  return request(PUT_POST_form_submit,
     {
       method: 'POST',
       data: paramString,
@@ -83,19 +89,20 @@ export async function updatePostSvc(params: PostParamsType) {
 
 export function getCategoryListSvc() {
   var categoryList: string[] = CATEGORY_LIST.slice();
-  getCategories()
+  getCategories(true)
     .then((response) => categoryList.push(response.data))
     .catch((error) => categoryList = CATEGORY_LIST.slice());
   return categoryList;
 }
 
-export async function getCategories() {
+export async function getCategories(useCache: boolean) {
   return request(GET_CATEGORIES ,
     {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-      }
+      },
+      useCache: useCache,
     }).then((response) => {
     return response;
   }).catch((error) => {

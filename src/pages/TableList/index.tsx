@@ -1,19 +1,28 @@
-import {PlusOutlined, SmileOutlined} from '@ant-design/icons';
+import {
+  DollarOutlined, DownCircleTwoTone,
+  GlobalOutlined,
+  MailOutlined,
+  PlusOutlined,
+  PushpinOutlined,
+  SmileOutlined, UpCircleTwoTone
+} from '@ant-design/icons';
 import { Button, message, Drawer } from 'antd';
 import React, { useState, useRef } from 'react';
 import {useIntl, FormattedMessage, connect} from 'umi';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import {ModalForm, ProFormList, ProFormSelect, ProFormText, ProFormTextArea} from '@ant-design/pro-form';
+import {ModalForm, ProFormSelect, ProFormText, ProFormTextArea} from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import UpdateForm, {FormValueType} from './components/UpdateForm';
-import {updatePost, addPost, deletePost} from './service';
+import {updatePost, addPost, deletePost, allPosts} from './service';
 import {Post} from "@/models/post";
 import {getCategoryListSvc, getPost, searchPostsByCategory} from "@/services/post";
 import {ConnectState} from "@/models/connect";
 import {SearchProps} from "@/pages/Welcome";
+import styles from "@/pages/User/login/index.less";
+import {initMap} from "@/utils/utils";
 
 const handleAdd = async (fields: Post) => {
   const hide = message.loading('Adding..');
@@ -94,8 +103,7 @@ const PostList: React.FC<SearchProps> = (props) => {
           defaultMessage="Post Title"
         />
       ),
-      dataIndex: 'name',
-      tip: 'Post Title is unique key',
+      dataIndex: 'title',
       render: (dom, entity) => {
         return (
           <a
@@ -125,15 +133,6 @@ const PostList: React.FC<SearchProps> = (props) => {
       dataIndex: 'rating',
       valueType: 'textarea',
       render: (_, record) => [
-        <a
-          key="config"
-          onClick={() => {
-            handleUpdateModalVisible(true);
-            setCurrentRow(record);
-          }}
-        >
-          <FormattedMessage id="pages.searchTable.config" defaultMessage="Configuration" />
-        </a>,
           <div>
             <a key="upVote" href="#"
                onSubmit={async (value) => {
@@ -146,7 +145,7 @@ const PostList: React.FC<SearchProps> = (props) => {
                    }
                  }
                }}>
-              <SmileOutlined style={{fontSize: 16}}/>
+              <UpCircleTwoTone style={{fontSize: 16}}/>
             </a>
             &nbsp;&nbsp;&nbsp;&nbsp;
             <a key="downVote" href="#"
@@ -160,10 +159,21 @@ const PostList: React.FC<SearchProps> = (props) => {
                    }
                  }
                }}>
-              <SmileOutlined rotate={180} style={{fontSize: 16}}/>
+              <DownCircleTwoTone style={{fontSize: 16}}/>
             </a>
           </div>,
       ],
+    },
+    {
+      title: <FormattedMessage id="pages.searchTable.website" defaultMessage="Website" />,
+      dataIndex: 'website',
+      valueType: 'textarea',
+    },
+    {
+      title: <FormattedMessage id="pages.searchTable.price" defaultMessage="Price" />,
+      dataIndex: 'price',
+      valueType: 'select',
+      valueEnum: getCategoryListSvc,
     },
   ];
 
@@ -197,13 +207,15 @@ const PostList: React.FC<SearchProps> = (props) => {
             setSelectedRows(selectedRows);
           },
         }}
-        request={(params, sorter, filter) => searchPostsByCategory({ ...{category: postParameters?.key || postParameters?.category || 'school',
-            currentPage: 1,
-            pageSize: 10,}, sorter, filter }).content}
-      />
-
-
-
+        request={async (params,
+                  sorter,
+                  filter) =>
+                allPosts({
+                          ...{currentPage: 0, pageSize: 10,},
+                          sorter,
+                          filter
+                      })
+              }/>
       {selectedRowsState?.length > 0 && (
         <FooterToolbar
           extra={
@@ -230,10 +242,7 @@ const PostList: React.FC<SearchProps> = (props) => {
             actionRef.current?.reloadAndRest?.();
           }}
         >
-          <FormattedMessage id="pages.searchTable.batchDeletion" defaultMessage="Batch Deletion" />
-        </Button>
-        <Button type="primary">
-          <FormattedMessage id="pages.searchTable.batchApproval" defaultMessage="Batch Approval" />
+          <FormattedMessage id="pages.searchTable.batchDeletion" defaultMessage="Delete Posts" />
         </Button>
       </FooterToolbar>
       )}
@@ -269,6 +278,7 @@ const PostList: React.FC<SearchProps> = (props) => {
           ]}
           width="md"
           name="title"
+          label="Post Title"
         />
         <ProFormTextArea width="md" name="description" label="Description" />
         <ProFormSelect
@@ -276,6 +286,45 @@ const PostList: React.FC<SearchProps> = (props) => {
           width="md"
           name="category"
           label="Category"
+        />
+        <ProFormText
+          fieldProps={{
+            size: 'large',
+            prefix: <GlobalOutlined className={styles.prefixIcon} />,
+          }}
+          rules={[
+            {
+              pattern: /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/,
+              message: (
+                <FormattedMessage
+                  id="pages.searchTable.createpost.website"
+                  defaultMessage="Website URL is malformed"
+                />
+              ),
+            },
+          ]}
+          width="md"
+          name="website"
+          label="Website"
+        />
+        <ProFormText
+          fieldProps={{
+            size: 'large',
+            prefix: <PushpinOutlined className={styles.prefixIcon} />,
+          }}
+          width="md"
+          name="geolocation"
+          label="Location (lat, lon}"
+        />
+        {initMap(1.2966, 103.7764)}
+        <ProFormText
+          fieldProps={{
+            size: 'large',
+            prefix: <DollarOutlined className={styles.prefixIcon} />,
+          }}
+          width="md"
+          name="price"
+          label="Price"
         />
       </ModalForm>
       <UpdateForm
@@ -307,7 +356,7 @@ const PostList: React.FC<SearchProps> = (props) => {
       >
         {currentRow?.title && (
           <ProDescriptions<Post>
-            column={2}
+            column={1}
             title={currentRow?.title}
             request={async () => ({
               data: currentRow || {},
